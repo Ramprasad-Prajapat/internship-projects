@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart AI Hand Gesture Controlled Website</title>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --secondary: #7000ff;
+            --secondary-glow: rgba(112, 0, 255, 0.4);
+            --accent: #ff0055;
+            --success: #00ff88;
+            --danger: #ff3333;
+            --warning: #ffcc00;
+
+            --bg-dark: #050505;
+            --bg-card: rgba(15, 15, 20, 0.6);
+            --bg-card-hover: rgba(25, 25, 35, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.08);
+
+            --text-main: #ffffff;
+            --text-muted: #8892b0;
+
+            --sidebar-width: 280px;
+            --hud-size: 340px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+            /* It's an SPA app-like interface */
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            transition: background 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Dynamic Page Background Classes */
+        body.bg-home {
+            background-color: #03000a;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.15), transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(112, 0, 255, 0.15), transparent 45%);
+        }
+
+        body.bg-detection {
+            background-color: #02070f;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1), transparent 50%),
+                radial-gradient(circle at 10% 90%, rgba(0, 240, 255, 0.1), transparent 45%);
+        }
+
+        body.bg-mouse {
+            background-color: #050510;
+            background-image:
+                radial-gradient(circle at 30% 20%, rgba(0, 240, 255, 0.12), transparent 45%),
+                radial-gradient(circle at 70% 80%, rgba(255, 0, 85, 0.1), transparent 45%);
+        }
+
+        body.bg-hospital {
+            background-color: #010c14;
+            background-image:
+                radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.12), transparent 40%);
+        }
+
+        body.bg-presentation {
+            background-color: #0a0a0f;
+            background-image:
+                radial-gradient(circle at 50% 10%, rgba(112, 0, 255, 0.15), transparent 45%),
+                radial-gradient(circle at 90% 90%, rgba(0, 240, 255, 0.08), transparent 45%);
+        }
+
+        body.bg-gallery {
+            background-color: #0d0905;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.12), transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(112, 0, 255, 0.12), transparent 45%);
+        }
+
+        body.bg-drawing {
+            background-color: #070e0f;
+            background-image:
+                radial-gradient(circle at 30% 70%, rgba(0, 240, 255, 0.15), transparent 45%),
+                radial-gradient(circle at 70% 30%, rgba(255, 0, 85, 0.12), transparent 45%);
+        }
+
+        body.bg-video {
+            background-color: #03010b;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(255, 0, 85, 0.08), transparent 40%);
+        }
+
+        body.bg-login {
+            background-color: #020b12;
+            background-image:
+                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.15), transparent 45%),
+                radial-gradient(circle at 20% 80%, rgba(112, 0, 255, 0.12), transparent 45%);
+        }
+
+        body.bg-emergency {
+            background-color: #120202;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(255, 51, 51, 0.2), transparent 50%),
+                radial-gradient(circle at 10% 10%, rgba(112, 0, 255, 0.1), transparent 40%);
+        }
+
+        body.bg-settings {
+            background-color: #0b070f;
+            background-image:
+                radial-gradient(circle at 80% 30%, rgba(112, 0, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 20% 70%, rgba(255, 0, 85, 0.1), transparent 40%);
+        }
+
+        body.bg-about {
+            background-color: #040914;
+            background-image:
+                radial-gradient(circle at 15% 30%, rgba(0, 240, 255, 0.15), transparent 45%),
+                radial-gradient(circle at 85% 70%, rgba(112, 0, 255, 0.15), transparent 45%);
+        }
+
+        body.bg-contact {
+            background-color: #030c0c;
+            background-image:
+                radial-gradient(circle at 50% 80%, rgba(0, 255, 136, 0.15), transparent 45%),
+                radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.12), transparent 45%);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: 0.3s;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 40px;
+            padding-left: 10px;
+        }
+
+        .brand i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--primary);
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+        }
+
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 40px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeUp 0.5s ease forwards;
+            min-height: 100%;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-section {
+            height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.3));
+        }
+
+        .hero-btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 30px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 30px;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .hero-btn:hover,
+        .hero-btn.gesture-hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            height: 200px;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .gallery-item.active {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--primary-glow);
+            z-index: 10;
+        }
+
+        .gallery-item.active img {
+            transform: scale(1.1);
+        }
+
+        .drawing-container {
+            width: 100%;
+            height: 600px;
+            background: #000;
+            border-radius: 20px;
+            border: 2px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #draw-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .color-picker {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-swatch.active {
+            border-color: #fff;
+            transform: scale(1.2);
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .vital-card {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .vital-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .vital-card.danger {
+            border-color: var(--danger);
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
+        }
+
+        .vital-card.danger .vital-value {
+            color: var(--danger);
+        }
+
+        .video-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+        }
+
+        .video-controls-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            color: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .scan-container {
+            width: 300px;
+            height: 300px;
+            margin: 50px auto;
+            position: relative;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            overflow: hidden;
+            box-shadow: 0 0 50px var(--primary-glow);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            animation: scan 2s linear infinite alternate;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        .vision-hud {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: var(--hud-size);
+            height: calc(var(--hud-size) * 0.75);
+            background: #000;
+            border-radius: 16px;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--primary-glow);
+            transition: 0.3s;
+        }
+
+        .vision-hud video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .vision-hud canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+        }
+
+        .vision-status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .vision-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 5px var(--success);
+            animation: pulse 1s infinite alternate;
+        }
+
+        #virtual-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            display: none;
+            transition: border-color 0.1s, transform 0.1s;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        #virtual-cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        #virtual-cursor.clicking {
+            transform: scale(0.7);
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        #virtual-cursor.clicking::after {
+            background: var(--success);
+        }
+
+        #global-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 51, 51, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-box {
+            background: #000;
+            border: 2px solid var(--danger);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(255, 51, 51, 0.5);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 60vh;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--glass-border);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 5;
+        }
+
+        .interactable {
+            transition: 0.2s;
+        }
+
+        .interactable.gesture-hover {
+            box-shadow: 0 0 15px var(--primary);
+            transform: scale(1.05);
+        }
+
+        #gesture-toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(15, 15, 20, 0.9);
+            border: 1px solid var(--primary);
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10001;
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #gesture-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #gesture-toast i {
+            font-size: 24px;
+        }
+
+        /* Gesture HUD Panel */
+        .gesture-hud-panel {
+            position: fixed;
+            bottom: 295px;
+            /* Positioned directly above the enlarged Vision HUD */
+            right: 30px;
+            width: var(--hud-size);
+            background: rgba(5, 5, 10, 0.75);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 240, 255, 0.25);
+            border-radius: 16px;
+            padding: 15px;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.1);
+            color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .gesture-hud-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .gesture-hud-header span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gesture-hud-header .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .gesture-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .gesture-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .gesture-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .gesture-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .gesture-item span.gesture-name {
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gesture-item span.gesture-action {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* Active Gesture Glow */
+        .gesture-item.active-gesture {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            transform: scale(1.02);
+        }
+
+        .gesture-item.active-gesture span.gesture-name {
+            color: var(--success);
+        }
+
+        .gesture-item.active-gesture span.gesture-action {
+            color: #fff;
+        }
+
+        /* --- Rich Page Content Upgrades --- */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .telemetry-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .telemetry-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .telemetry-val {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 10px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .coord-display-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            height: 380px;
+            overflow-y: auto;
+            color: var(--primary);
+        }
+
+        .coord-line {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 4px;
+        }
+
+        .patient-card-wrapper {
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .vital-value {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Circular scan animation for security biometric */
+        .scan-circle-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 40px auto;
+            border-radius: 50%;
+            border: 3px solid rgba(0, 240, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .scan-circle-ring {
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            border: 2px dashed var(--primary);
+            animation: rotateRing 8s linear infinite;
+        }
+
+        .scan-pulse-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+            box-shadow: 0 0 15px var(--primary);
+            animation: scannerSweep 2s ease-in-out infinite;
+        }
+
+        @keyframes rotateRing {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes scannerSweep {
+            0% {
+                top: 0%;
+                opacity: 0.1;
+            }
+
+            50% {
+                top: 100%;
+                opacity: 1;
+            }
+
+            100% {
+                top: 0%;
+                opacity: 0.1;
+            }
+        }
+
+        /* Lightbox popup Modal for gallery */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10005;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .lightbox-content {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .lightbox-title {
+            margin-top: 20px;
+            font-size: 22px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global UI Elements -->
+    <div id="gesture-toast"><i class="fa-solid fa-hand-sparkles"></i> <span>System Ready</span></div>
+    <div id="virtual-cursor"></div>
+    <div id="global-alert">
+        <div class="alert-box">
+            <h1 style="color: var(--danger); font-size: 60px; margin-bottom: 20px;"><i
+                    class="fa-solid fa-triangle-exclamation"></i></h1>
+            <h1 style="color: white; font-size: 40px; margin-bottom: 10px;">EMERGENCY DETECTED</h1>
+            <p style="color: var(--text-muted); font-size: 18px;">Please remain calm. System lockdown initiated.</p>
+            <p style="color: var(--danger); margin-top: 20px;">Use Closed Fist to dismiss.</p>
+        </div>
+    </div>
+
+    <!-- Gesture Guide HUD -->
+    <div class="gesture-hud-panel">
+        <div class="gesture-hud-header">
+            <span><i class="fa-solid fa-hand-sparkles"></i> Gesture Directory</span>
+            <span style="font-size: 10px;">
+                <div class="status-dot"></div> Live HUD
+            </span>
+        </div>
+        <div class="gesture-list-container">
+            <div class="gesture-section-title">Global Actions</div>
+            <div class="gesture-item-list">
+                <div class="gesture-item" id="gesture-global-cursor">
+                    <span class="gesture-name">☝ 1 Finger</span>
+                    <span class="gesture-action">Move Cursor</span>
+                </div>
+                <div class="gesture-item" id="gesture-global-click">
+                    <span class="gesture-name">✌ 2 Fingers</span>
+                    <span class="gesture-action">Select / Click</span>
+                </div>
+                <div class="gesture-item" id="gesture-global-scroll-up">
+                    <span class="gesture-name">🤟 3 Fingers</span>
+                    <span class="gesture-action">Scroll Page Up</span>
+                </div>
+                <div class="gesture-item" id="gesture-global-scroll-down">
+                    <span class="gesture-name">🍀 4 Fingers</span>
+                    <span class="gesture-action">Scroll Page Down</span>
+                </div>
+            </div>
+
+            <div class="gesture-section-title" id="page-gestures-title">Home Actions</div>
+            <div class="gesture-item-list" id="page-gestures-list">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Vision HUD -->
+    <div class="vision-hud">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="vision-overlay"></canvas>
+        <div class="vision-status">
+            <div class="dot"></div> VISION ACTIVE
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-hammer"></i> Digital Hammer
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active interactable" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> Home
+            </li>
+            <li class="nav-item interactable" onclick="switchPage('detection')"><i class="fa-solid fa-eye"></i> Gesture
+                Detection</li>
+            <li class="nav-item interactable" onclick="switchPage('mouse')"><i class="fa-solid fa-mouse-pointer"></i>
+                Virtual Mouse</li>
+            <li class="nav-item interactable" onclick="switchPage('hospital')"><i class="fa-solid fa-hospital"></i>
+                Smart Hospital</li>
+            <li class="nav-item interactable" onclick="switchPage('presentation')"><i class="fa-solid fa-desktop"></i>
+                AI Presentation</li>
+            <li class="nav-item interactable" onclick="switchPage('gallery')"><i class="fa-solid fa-images"></i> Smart
+                Gallery</li>
+            <li class="nav-item interactable" onclick="switchPage('drawing')"><i class="fa-solid fa-palette"></i>
+                Virtual Drawing</li>
+            <li class="nav-item interactable" onclick="switchPage('video')"><i class="fa-solid fa-video"></i> Smart
+                Video</li>
+            <li class="nav-item interactable" onclick="switchPage('login')"><i class="fa-solid fa-fingerprint"></i>
+                Smart Login</li>
+            <li class="nav-item interactable" onclick="switchPage('emergency')"><i class="fa-solid fa-bell"></i>
+                Emergency System</li>
+            <li class="nav-item interactable" onclick="switchPage('settings')"><i class="fa-solid fa-sliders"></i>
+                Settings</li>
+            <li class="nav-item interactable" onclick="switchPage('about')"><i class="fa-solid fa-circle-info"></i>
+                About Project</li>
+            <li class="nav-item interactable" onclick="switchPage('contact')"><i class="fa-solid fa-envelope"></i>
+                Contact</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- 1. Home Page -->
+        <div id="home" class="page active">
+        <div class="hero-section">
+            <h1 class="hero-title">Spatial Computing<br>Reimagined.</h1>
+            <p class="page-subtitle" style="font-size: 20px; max-width: 600px; margin-bottom: 20px;">Experience the
+                future of touchless interfaces with our cutting-edge AI Hand Gesture Control System.</p>
+            <div style="display: flex; gap: 20px; margin-bottom: 35px;">
+                <button class="hero-btn interactable" onclick="switchPage('hospital')">Start Experience</button>
+                <button class="hero-btn interactable"
+                    style="background: rgba(255,255,255,0.1); border-color: transparent; color: white;"
+                    onclick="switchPage('detection')">View Diagnostics</button>
+            </div>
+
+            <div class="glass-card" style="width: 100%; text-align: left;">
+                <h3><i class="fa-solid fa-gauge-high" style="color: var(--primary); margin-right: 10px;"></i> System
+                    Telemetry</h3>
+                <div class="telemetry-grid">
+                    <div class="telemetry-card">
+                        <small style="color: var(--text-muted);">FRAME RATE</small>
+                        <div class="telemetry-val" id="telemetry-fps">60 FPS</div>
+                    </div>
+                    <div class="telemetry-card">
+                        <small style="color: var(--text-muted);">LATENCY</small>
+                        <div class="telemetry-val" id="telemetry-latency">8.4 ms</div>
+                    </div>
+                    <div class="telemetry-card">
+                        <small style="color: var(--text-muted);">CONFIDENCE</small>
+                        <div class="telemetry-val" id="telemetry-confidence">98.2%</div>
+                    </div>
+                    <div class="telemetry-card">
+                        <small style="color: var(--text-muted);">OS STATUS</small>
+                        <div class="telemetry-val"
+                            style="color: var(--success); text-shadow: 0 0 10px rgba(0,255,136,0.4);">SECURE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Gesture Detection -->
+    <div id="detection" class="page">
+        <h1 class="page-title">Gesture Detection Matrix</h1>
+        <p class="page-subtitle">Real-time raw coordinate tracking from MediaPipe Hands</p>
+        <div class="grid-2">
+            <div class="glass-card" style="border-color: var(--primary);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary); margin: 0;"><i class="fa-solid fa-microchip"></i> Live Coordinate
+                        Stream</h3>
+                    <span
+                        style="font-size: 11px; background: rgba(0, 240, 255, 0.15); color: var(--primary); padding: 3px 8px; border-radius: 12px; font-family: monospace;">HAND
+                        [0] ACTIVE</span>
+                </div>
+                <div class="coord-display-panel" id="live-coordinate-stream">
+                    <div style="color: var(--text-muted); text-align: center; margin-top: 150px; font-style: italic;">
+                        Awaiting hand entry into camera frame...</div>
+                </div>
+            </div>
+            <div class="glass-card" style="display:flex; flex-direction:column; justify-content:center;">
+                <i class="fa-solid fa-gauge-high fa-4x" style="color: var(--primary); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary-glow));"></i>
+                <h2>Telemetry Stream</h2>
+                <p style="color:var(--text-muted); font-size:15px; margin-top:15px; line-height:1.6;">This section displays the high-fidelity spatial telemetry from your camera sensor. View the exact (X, Y, Z) coordinates of each hand landmark extracted in real-time by our touchless spatial computing framework.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Virtual Mouse -->
+    <div id="mouse" class="page">
+        <h1 class="page-title">Virtual Mouse Control</h1>
+        <p class="page-subtitle">Aim index finger to track, hold 2 fingers for 800ms to click / select options.</p>
+
+
+        <div class="grid-2">
+            <div class="glass-card" style="text-align: center;">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">Interactive Testing Grid</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <button class="hero-btn interactable" style="margin:0;"
+                        onclick="showToast('Diagnostic A1 Fired', 'fa-solid fa-bolt')">Diagnostic A1</button>
+                    <button class="hero-btn interactable" style="margin:0;"
+                        onclick="showToast('Diagnostic B2 Fired', 'fa-solid fa-circle-check')">Diagnostic B2</button>
+                    <button class="hero-btn interactable"
+                        style="margin:0; background: transparent; border-color: var(--primary); color: var(--primary);"
+                        onclick="document.body.classList.toggle('dark-theme-override'); showToast('Telemetry Theme Toggled')">Theme
+                        Shift</button>
+                    <button class="hero-btn interactable"
+                        style="margin:0; background: transparent; border-color: var(--danger); color: var(--danger);"
+                        onclick="showToast('Locking Interface...', 'fa-solid fa-lock')">Lock Interface</button>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-pen-to-square"></i> Touchless Notebook</h3>
+                <textarea class="interactable" id="notepad-area"
+                    style="width:100%; height:130px; border-radius:10px; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); padding:10px; color:white; font-size:14px; outline:none;"
+                    placeholder="Point here, transition to 2 fingers to focus, then use your keyboard to take notes..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Smart Hospital -->
+    <div id="hospital" class="page">
+        <h1 class="page-title">Aura Hospital Dashboard</h1>
+        <p class="page-subtitle">Touchless patient monitoring. Swipe Right/Left or use scroll controls to navigate
+            patients.</p>
+
+        <div class="grid-2">
+            <!-- Patient Wrapper (updates dynamically in JS) -->
+            <div class="glass-card patient-card-wrapper" id="hospital-patient-panel">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <img id="patient-avatar" src="https://i.pravatar.cc/150?img=1"
+                            style="width: 60px; border-radius: 15px; border: 2px solid var(--primary);">
+                        <div>
+                            <h2 style="margin: 0;" id="patient-name">Sarah Jenkins</h2>
+                            <p style="color: var(--text-muted); font-size: 14px;" id="patient-id">ICU Bed 04</p>
+                        </div>
+                    </div>
+                    <span id="patient-status"
+                        style="padding: 5px 15px; background: rgba(255,51,51,0.2); color: var(--danger); border-radius: 20px; font-weight: bold; border: 1px solid var(--danger); height: fit-content;">CRITICAL</span>
+                </div>
+                <div class="vitals-grid">
+                    <div class="vital-card danger" id="vital-heart-card">
+                        <small>HEART RATE</small>
+                        <div class="vital-value" id="vital-heart">134 <span style="font-size: 16px;">bpm</span></div>
+                    </div>
+                    <div class="vital-card" id="vital-sp-card">
+                        <small>OXYGEN (SPO2)</small>
+                        <div class="vital-value" id="vital-sp" style="color: var(--success);">98 <span
+                                style="font-size: 16px;">%</span></div>
+                    </div>
+                    <div class="vital-card" id="vital-bp-card">
+                        <small>BLOOD PRESSURE</small>
+                        <div class="vital-value" id="vital-bp">120/80</div>
+                    </div>
+                    <div class="vital-card" id="vital-temp-card">
+                        <small>TEMPERATURE</small>
+                        <div class="vital-value" id="vital-temp" style="color: var(--warning);">39.2 <span
+                                style="font-size: 16px;">°C</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
+                <i class="fa-solid fa-circle-h fa-4x" style="color: var(--success); margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(0,255,136,0.4));"></i>
+                <h2>Clinical Telemetry</h2>
+                <p style="color:var(--text-muted); font-size:15px; margin-top:15px; line-height:1.6;">This touchless dashboard displays active patient cardiac waveforms and blood oxygen levels in real-time. Use touchless controls to monitor clinical records or trigger automated medical alerts immediately.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. AI Presentation -->
+    <div id="presentation" class="page">
+        <h1 class="page-title">AI Presentation Control</h1>
+        <p class="page-subtitle">Control slides seamlessly. Swipe Left/Right to change slides.</p>
+
+        <div class="presentation-container">
+            <div class="slide active"
+                style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'); position: relative;">
+                <div
+                    style="position: absolute; bottom: 40px; left: 40px; background: rgba(0,0,0,0.6); padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); max-width: 500px;">
+                    <h2 style="color: var(--primary); margin-bottom: 10px;">01 // Next Gen Spatial AI</h2>
+                    <p style="color: #ccc; font-size: 14px; line-height: 1.6;">Leveraging computer vision networks to
+                        project digital workflows into human-centric, touchless operating spaces.</p>
+                </div>
+            </div>
+            <div class="slide"
+                style="background: linear-gradient(135deg, #101220, #0a0a0f); position: relative; display: flex; align-items: center; justify-content: center; padding: 40px;">
+                <div style="text-align: center; max-width: 600px;">
+                    <h2 style="color: var(--success); margin-bottom: 20px;"><i class="fa-solid fa-chart-line"></i> 02 //
+                        Neural Net Architecture</h2>
+                    <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">Using high-accuracy bounding
+                        regressions to track 21 discrete hand coordinates at up to 60 frames per second on browser-level
+                        client hardware.</p>
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <div
+                            style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); width: 150px;">
+                            <h3>99.4%</h3><small style="color:var(--text-muted);">Confidence</small>
+                        </div>
+                        <div
+                            style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); width: 150px;">
+                            <h3>&lt; 10ms</h3><small style="color:var(--text-muted);">Latency</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide"
+                style="background: linear-gradient(135deg, #021217, #07090d); position: relative; display: flex; align-items: center; justify-content: center; padding: 40px;">
+                <div style="text-align: center; max-width: 600px;">
+                    <h2 style="color: var(--accent); margin-bottom: 20px;"><i class="fa-solid fa-cubes"></i> 03 //
+                        Clinical Case Studies</h2>
+                    <p style="color: #ccc; margin-bottom: 20px; line-height: 1.6;">Field tested inside active touchless
+                        operating spaces, yielding 94% higher workspace sterility compliance and zero physical device
+                        interface dependencies.</p>
+                    <small
+                        style="color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">-
+                        Aura Medical Research Group -</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Smart Gallery -->
+    <div id="gallery" class="page">
+        <h1 class="page-title">Smart Gallery</h1>
+        <p class="page-subtitle">Swipe Left/Right to browse imagery. Transition to 2 fingers on highlighted card to view
+            full screen.</p>
+
+        <div class="gallery-grid">
+            <div class="gallery-item active interactable"
+                onclick="openLightbox('https://images.unsplash.com/photo-1618005198143-e528346d9a59?auto=format&fit=crop&w=1200&q=80', 'Abstract Mesh 01')">
+                <img src="https://images.unsplash.com/photo-1618005198143-e528346d9a59?auto=format&fit=crop&w=600&q=80">
+            </div>
+            <div class="gallery-item interactable"
+                onclick="openLightbox('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=1200&q=80', 'Abstract Geometry 02')">
+                <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80">
+            </div>
+            <div class="gallery-item interactable"
+                onclick="openLightbox('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80', 'Cyber Security Terminal')">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80">
+            </div>
+            <div class="gallery-item interactable"
+                onclick="openLightbox('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80', 'Holographic Circuit Board')">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80">
+            </div>
+        </div>
+
+        <!-- Lightbox Modal container -->
+        <div class="lightbox-modal" id="gallery-lightbox" onclick="closeLightbox()">
+            <img class="lightbox-content" id="lightbox-img" src="" alt="">
+            <div class="lightbox-title" id="lightbox-title">Demo Image</div>
+            <p style="color:var(--text-muted); font-size:12px; margin-top:5px;">Use Closed Fist to dismiss full screen.
+            </p>
+        </div>
+    </div>
+
+    <!-- 7. Virtual Drawing -->
+    <div id="drawing" class="page">
+        <h1 class="page-title">Air Canvas</h1>
+        <p class="page-subtitle">Use 1 Finger to draw in the air, Open Palm to clear the canvas, and 2 Fingers to select
+            colors.</p>
+
+        <div class="grid-2">
+            <div class="drawing-container" style="height:400px; display:flex; flex-direction:column; gap:10px;">
+                <canvas id="draw-canvas"
+                    style="flex:1; width:100%; height:320px; background:rgba(0,0,0,0.5); border-radius:15px; border:1px solid var(--glass-border);"></canvas>
+                <div class="color-picker" style="display:flex; gap:15px; justify-content:center;">
+                    <div class="color-swatch interactable active"
+                        style="background: var(--primary); width:35px; height:35px; border-radius:50%; cursor:pointer;">
+                    </div>
+                    <div class="color-swatch interactable"
+                        style="background: var(--accent); width:35px; height:35px; border-radius:50%; cursor:pointer;">
+                    </div>
+                    <div class="color-swatch interactable"
+                        style="background: var(--success); width:35px; height:35px; border-radius:50%; cursor:pointer;">
+                    </div>
+                    <div class="color-swatch interactable"
+                        style="background: var(--warning); width:35px; height:35px; border-radius:50%; cursor:pointer;">
+                    </div>
+                    <div class="color-swatch interactable"
+                        style="background: #ffffff; width:35px; height:35px; border-radius:50%; cursor:pointer;"></div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h3 style="margin-bottom:15px;"><i class="fa-solid fa-images"></i> Saved Canvas Sketches</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
+                    <div
+                        style="background:rgba(255,255,255,0.02); height:120px; border-radius:10px; border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center;">
+                        <small style="color:var(--text-muted);">Sketch A01</small></div>
+                    <div
+                        style="background:rgba(255,255,255,0.02); height:120px; border-radius:10px; border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center;">
+                        <small style="color:var(--text-muted);">Sketch A02</small></div>
+                </div>
+                <button class="hero-btn interactable" style="width:100%; margin-top:20px;"
+                    onclick="saveDrawingCanvas()">Save Current Canvas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Smart Video -->
+    <div id="video" class="page">
+        <h1 class="page-title">Holographic Media Center</h1>
+        <p class="page-subtitle">Thumbs Up: Play | Open Palm: Pause | Swipes: Rewind/Forward | Two Fingers Volume Control</p>
+
+        <div class="grid-2">
+            <div class="video-wrapper"
+                style="border: 2px solid var(--glass-border); border-radius: 20px; overflow: hidden; background: black;">
+                <video id="smart-video-player" style="width:100%; display:block;"
+                    src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                    controls></video>
+            </div>
+
+            <div class="glass-card" style="display:flex; flex-direction:column; justify-content:center;">
+                <h3 style="margin-bottom: 10px; color: var(--primary);"><i class="fa-solid fa-volume-high"></i>
+                    Holographic Volume Stream</h3>
+                <div
+                    style="background:rgba(255,255,255,0.05); height:15px; border-radius:10px; margin: 15px 0; overflow:hidden;">
+                    <div id="volume-indicator-bar"
+                        style="width: 50%; height:100%; background:var(--primary); transition: width 0.1s ease;"></div>
+                </div>
+                <small style="color:var(--text-muted);">Two fingers up + vertical hand movement adjusts output sound dynamically.</small>
+
+                <hr style="border: 0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
+
+                <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-photo-film"></i> Streaming Channels</h3>
+                <div style="display:flex; gap:10px;">
+                    <div class="interactable"
+                        style="flex:1; background:rgba(255,255,255,0.02); border:1px solid rgba(0,240,255,0.1); border-radius:8px; padding:10px; text-align:center; cursor:pointer;"
+                        onclick="changeVideoSource('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
+                        <small>Elephants Dream</small></div>
+                    <div class="interactable"
+                        style="flex:1; background:rgba(255,255,255,0.02); border:1px solid rgba(255,0,85,0.1); border-radius:8px; padding:10px; text-align:center; cursor:pointer;"
+                        onclick="changeVideoSource('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
+                        <small>Big Buck Bunny</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 9. Smart Login -->
+    <div id="login" class="page">
+        <div style="text-align: center; margin-top: 30px;">
+            <h1 class="page-title">Biometric Entry</h1>
+            <p class="page-subtitle">Present Open Palm to scan, Thumbs Up to Confirm security validation.</p>
+
+            <div class="grid-2" style="text-align:left;">
+                <div class="glass-card" style="text-align:center;">
+                    <h3 style="margin-bottom:10px; color:var(--primary);"><i class="fa-solid fa-fingerprint"></i>
+                        Biometric Scanner</h3>
+                    <div class="scan-circle-container">
+                        <div class="scan-circle-ring"></div>
+                        <div class="scan-pulse-line"></div>
+                        <i class="fa-solid fa-hand-holding fa-3x" style="color:var(--primary); opacity:0.6;"></i>
+                    </div>
+                    <p id="biometric-status-text" style="font-weight:600; color:var(--text-muted);">Biometric scanner
+                        online. Present palm...</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-lock-open"></i> Access Logs</h3>
+                    <div class="coord-display-panel" style="height:230px;" id="biometric-logs">
+                        <div class="coord-line">[12:24:19] SYSTEM BOOT: Biometrics enabled</div>
+                        <div class="coord-line">[12:24:19] SYS_LOG: Scanning modules initialized</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Emergency Alert -->
+    <div id="emergency" class="page">
+        <div class="glass-card" style="border-color: var(--danger); text-align: center; padding: 40px 60px;">
+            <i class="fa-solid fa-shield-halved fa-5x"
+                style="color: var(--danger); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(255,51,51,0.6));"></i>
+            <h1 class="page-title"
+                style="color: var(--danger); -webkit-text-fill-color: var(--danger); font-size:46px;">Emergency Protocol
+                Active</h1>
+            <p class="page-subtitle" style="font-size: 20px; margin-bottom: 25px;">Triggered via "Palm Near Camera"
+                gesture.</p>
+
+            <div class="grid-2" style="text-align:left; margin-bottom:30px;">
+                <div class="glass-card" style="border-color:rgba(255,51,51,0.15); background:rgba(0,0,0,0.5);">
+                    <h3 style="color:var(--danger); margin-bottom:15px;"><i
+                            class="fa-solid fa-triangle-exclamation"></i> Threat Checklist</h3>
+                    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+                        <li><i class="fa-solid fa-square-check" style="color:var(--danger);"></i> Core medical systems
+                            check: OK</li>
+                        <li><i class="fa-solid fa-square-check" style="color:var(--danger);"></i> Vitals alerts
+                            dispatched: ONLINE</li>
+                        <li><i class="fa-solid fa-square-check" style="color:var(--danger);"></i> Security lockouts
+                            engaged: ARMED</li>
+                    </ul>
+                </div>
+                <div class="glass-card" style="border-color:rgba(255,51,51,0.15); background:rgba(0,0,0,0.5);">
+                    <h3 style="color:var(--danger); margin-bottom:15px;"><i class="fa-solid fa-volume-xmark"></i> Active
+                        Alarms</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <button class="hero-btn interactable"
+                            style="margin:0; border-color:var(--danger); color:var(--danger); width:100%;"
+                            onclick="showToast('Siren Muted')">Siren Audio Mute</button>
+                        <button class="hero-btn interactable"
+                            style="margin:0; border-color:var(--text-muted); color:var(--text-muted); width:100%;"
+                            onclick="showToast('Dispatched Signal Update')">Broadcast Vitals Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="hero-btn interactable"
+                style="background: var(--danger); color: white; border-color: var(--danger); width:300px; padding:15px;"
+                onclick="switchPage('hospital'); document.getElementById('global-alert').style.display='none';">Deactivate
+                Alert Protocol</button>
+        </div>
+    </div>
+
+    <!-- 11. Settings -->
+    <div id="settings" class="page">
+        <h1 class="page-title">System OS Settings</h1>
+        <p class="page-subtitle">Configure spatial tracking and UI variables. All values persist automatically.</p>
+        <div class="glass-card" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <span style="font-size: 18px; font-weight: 600; display:block;">Gesture Smoothing</span>
+                    <small style="color:var(--text-muted);">Current Value: <b id="val-smoothing-display">0.2</b></small>
+                </div>
+                <input type="range" class="interactable" id="setting-smoothing" min="0.05" max="0.5" step="0.05"
+                    value="0.2" oninput="updateSetting('smoothing', this.value)">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <span style="font-size: 18px; font-weight: 600; display:block;">Webcam Overlay Brightness</span>
+                    <small style="color:var(--text-muted);">Current Value: <b
+                            id="val-brightness-display">1.0</b></small>
+                </div>
+                <input type="range" class="interactable" id="setting-brightness" min="0.5" max="1.5" step="0.1"
+                    value="1.0" oninput="updateSetting('brightness', this.value)">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <span style="font-size: 18px; font-weight: 600;">Theme Mode</span>
+                <button class="hero-btn interactable" style="margin: 0; padding: 10px 20px;"
+                    onclick="document.body.classList.toggle('dark-theme-override'); showToast('System Theme Shifted')">Toggle
+                    Mode</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 18px; font-weight: 600; color: var(--danger);">Purge Analytics</span>
+                <button class="hero-btn interactable"
+                    style="margin: 0; padding: 10px 20px; border-color: var(--danger); color: var(--danger);"
+                    onclick="localStorage.clear(); showToast('Aura Settings Cleared')">Reset Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. About -->
+    <div id="about" class="page">
+        <h1 class="page-title">Project Architecture</h1>
+        <p class="page-subtitle">How Aura OS spatial tracking works.</p>
+
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3 style="margin-bottom: 15px; color: var(--primary);">Technologies Used</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+                    <li><i class="fa-brands fa-html5" style="color: #e34f26; width: 30px;"></i> HTML5 / CSS3 Layout</li>
+                    <li><i class="fa-brands fa-js" style="color: #f7df1e; width: 30px;"></i> Vanilla JavaScript / Custom
+                        Events</li>
+                    <li><i class="fa-solid fa-cube" style="color: #00f0ff; width: 30px;"></i> Google MediaPipe Hands SDK
+                    </li>
+                    <li><i class="fa-solid fa-network-wired" style="color: #7000ff; width: 30px;"></i> AI Coordinate
+                        Estimation models</li>
+                </ul>
+
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
+
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-chalkboard-user"></i> Core Algorithms</h3>
+                <p style="color:var(--text-muted); font-size:14px; line-height:1.6;">Aura OS maps hand coordinates to
+                    screen dimensions using linear scale ratios, applying customized exponential smoothing to damp wrist
+                    coordinates jitter:</p>
+                <pre
+                    style="background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; font-size:12px; font-family:monospace; color:var(--primary); margin-top:10px;">
+x_smooth = x_prev + (x_target - x_prev) * smoothing
+y_smooth = y_prev + (y_target - y_prev) * smoothing
+                    </pre>
+            </div>
+            <div class="glass-card" style="background: rgba(0, 240, 255, 0.05);">
+                <h3 style="margin-bottom: 15px; color: var(--primary);">System Workflow Diagram</h3>
+                <pre style="color: var(--text-muted); line-height: 2;">
+Webcam Input (640x480 pixel frame)
+      ↓
+Tensorflow Hand Pose Processing
+      ↓
+MediaPipe Hand Landmarks Extracted (21 keypoints)
+      ↓
+Spatial coordinates mapped to Screen Coordinate System
+      ↓
+Velocity vectors and angles recognized
+      ↓
+JavaScript Dispatcher triggers hover/click/scroll events
+      ↓
+Website Dynamic UI updates with smooth animations
+                    </pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Contact -->
+    <div id="contact" class="page">
+        <h1 class="page-title">System Support</h1>
+        <div class="grid-2">
+            <div class="glass-card" style="width:100%;">
+                <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-id-badge"></i> Requisition
+                    Form</h3>
+                <input type="text" class="interactable" id="contact-agent-id" placeholder="Agent ID / Clinician ID"
+                    style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); color: white; margin-bottom: 15px;">
+
+                <select class="interactable" id="contact-department"
+                    style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); color: white; margin-bottom: 15px;">
+                    <option value="cardiology">Cardiology Unit</option>
+                    <option value="icu">Intensive Care (ICU)</option>
+                    <option value="radiology">Radiology Diagnostics</option>
+                    <option value="neurology">Neurology Division</option>
+                </select>
+
+                <textarea class="interactable" id="contact-message" placeholder="Describe the anomaly..."
+                    style="width: 100%; height: 120px; padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); color: white; margin-bottom: 15px;"></textarea>
+
+                <div style="display: flex; gap: 15px;">
+                    <button class="hero-btn interactable"
+                        style="flex: 1; margin: 0; background: var(--primary); color: #000;"
+                        onclick="submitSupportForm()">Transmit</button>
+                    <button class="hero-btn interactable"
+                        style="flex: 1; margin: 0; border-color: var(--text-muted); color: var(--text-muted);"
+                        onclick="resetSupportForm()">Reset Form</button>
+                </div>
+            </div>
+
+            <div class="glass-card"
+                style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
+                <i class="fa-solid fa-paper-plane fa-4x"
+                    style="color:var(--success); margin-bottom:20px; filter: drop-shadow(0 0 10px rgba(0,255,136,0.4));"></i>
+                <h3>Touchless Submission Engine</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:10px; line-height:1.6;">Hover the pointer
+                    over the "Transmit" button and transition to 2 fingers to select and dispatch your medical request
+                    instantly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Injection -->
+    <script>
+        // --- State & Navigation ---
+        let currentPage = 'home';
+        const pages = ['home', 'detection', 'mouse', 'hospital', 'presentation', 'gallery', 'drawing', 'video', 'login', 'emergency', 'settings', 'about', 'contact'];
+
+        // Patient vital database array
+        let activePatientIndex = 0;
+        const hospitalPatients = [
+            {
+                name: "Sarah Jenkins",
+                id: "ICU Bed 04",
+                status: "CRITICAL",
+                avatar: "https://i.pravatar.cc/150?img=1",
+                vitals: { heart: 134, sp: 98, bp: "120/80", temp: 39.2 },
+                statusClass: "danger"
+            },
+            {
+                name: "John Doe",
+                id: "ICU Bed 11",
+                status: "STABLE",
+                avatar: "https://i.pravatar.cc/150?img=33",
+                vitals: { heart: 74, sp: 99, bp: "115/75", temp: 36.8 },
+                statusClass: "success"
+            },
+            {
+                name: "Emily Thorne",
+                id: "ICU Bed 08",
+                status: "MONITORING",
+                avatar: "https://i.pravatar.cc/150?img=47",
+                vitals: { heart: 92, sp: 95, bp: "135/85", temp: 37.4 },
+                statusClass: "warning"
+            }
+        ];
+
+        function updateHospitalPatient() {
+            const p = hospitalPatients[activePatientIndex];
+            const nameEl = document.getElementById('patient-name');
+            const idEl = document.getElementById('patient-id');
+            const statusEl = document.getElementById('patient-status');
+            const avatarEl = document.getElementById('patient-avatar');
+            const heartEl = document.getElementById('vital-heart');
+            const spEl = document.getElementById('vital-sp');
+            const bpEl = document.getElementById('vital-bp');
+            const tempEl = document.getElementById('vital-temp');
+
+            const heartCard = document.getElementById('vital-heart-card');
+            const tempCard = document.getElementById('vital-temp-card');
+
+            if (!nameEl) return;
+
+            nameEl.innerText = p.name;
+            idEl.innerText = p.id;
+            statusEl.innerText = p.status;
+            avatarEl.src = p.avatar;
+
+            heartEl.innerHTML = `${p.vitals.heart} <span style="font-size: 16px;">bpm</span>`;
+            spEl.innerHTML = `${p.vitals.sp} <span style="font-size: 16px;">%</span>`;
+            bpEl.innerHTML = p.vitals.bp;
+            tempEl.innerHTML = `${p.vitals.temp} <span style="font-size: 16px;">°C</span>`;
+
+            // Set styles
+            statusEl.className = '';
+            if (p.statusClass === 'danger') {
+                statusEl.style.background = 'rgba(255,51,51,0.2)';
+                statusEl.style.color = 'var(--danger)';
+                statusEl.style.borderColor = 'var(--danger)';
+                if (heartCard) heartCard.className = 'vital-card danger';
+                if (tempCard) tempCard.style.color = 'var(--warning)';
+            } else if (p.statusClass === 'success') {
+                statusEl.style.background = 'rgba(0,255,136,0.2)';
+                statusEl.style.color = 'var(--success)';
+                statusEl.style.borderColor = 'var(--success)';
+                if (heartCard) heartCard.className = 'vital-card';
+                if (tempCard) tempCard.style.color = 'var(--success)';
+            } else {
+                statusEl.style.background = 'rgba(255,204,0,0.2)';
+                statusEl.style.color = 'var(--warning)';
+                statusEl.style.borderColor = 'var(--warning)';
+                if (heartCard) heartCard.className = 'vital-card';
+                if (tempCard) tempCard.style.color = 'var(--warning)';
+            }
+        }
+
+        // Gallery zoom Modal logic
+        function openLightbox(src, title) {
+            const lb = document.getElementById('gallery-lightbox');
+            const img = document.getElementById('lightbox-img');
+            const titleEl = document.getElementById('lightbox-title');
+            if (lb && img && titleEl) {
+                img.src = src;
+                titleEl.innerText = title;
+                lb.style.display = 'flex';
+                showToast("Image Zoomed", "fa-solid fa-expand");
+            }
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('gallery-lightbox');
+            if (lb) {
+                lb.style.display = 'none';
+                showToast("Zoom Dismissed");
+            }
+        }
+
+        // Drawing canvas visual sketch backup
+        function saveDrawingCanvas() {
+            showToast("Canvas Saved to sketches", "fa-solid fa-floppy-disk");
+        }
+
+        // Video Channel Changer
+        function changeVideoSource(src) {
+            const player = document.getElementById('smart-video-player');
+            if (player) {
+                player.src = src;
+                player.play();
+                showToast("Channel Changed", "fa-solid fa-tv");
+            }
+        }
+
+        // Persistent OS Configuration
+        function updateSetting(key, val) {
+            if (key === 'smoothing') {
+                smoothing = parseFloat(val);
+                const smoothValDisp = document.getElementById('val-smoothing-display');
+                if (smoothValDisp) smoothValDisp.innerText = val;
+            }
+            if (key === 'brightness') {
+                const brightValDisp = document.getElementById('val-brightness-display');
+                if (brightValDisp) brightValDisp.innerText = val;
+                const visionOverlay = document.getElementById('vision-overlay');
+                const webcamEl = document.getElementById('webcam');
+                if (visionOverlay) visionOverlay.style.opacity = val;
+                if (webcamEl) webcamEl.style.opacity = val;
+            }
+            localStorage.setItem(`aura_${key}`, val);
+        }
+
+        // Requisition submission
+        function submitSupportForm() {
+            const agentId = document.getElementById('contact-agent-id').value;
+            const msg = document.getElementById('contact-message').value;
+            if (!agentId || !msg) {
+                showToast("Please fill all form fields", "fa-solid fa-triangle-exclamation");
+                return;
+            }
+            showToast("Support request dispatched!", "fa-solid fa-paper-plane");
+            resetSupportForm();
+        }
+        function resetSupportForm() {
+            const agentInput = document.getElementById('contact-agent-id');
+            const msgInput = document.getElementById('contact-message');
+            if (agentInput) agentInput.value = '';
+            if (msgInput) msgInput.value = '';
+            showToast("Form fields reset");
+        }
+
+        // Dynamic Gesture Dictionary mapping to show in HUD
+        const PAGE_GESTURES = {
+            'home': [
+                { gesture: '🖐 Open Palm', action: 'Resume Detection', id: 'gesture-page-open-palm' },
+                { gesture: '✊ Closed Fist', action: 'Pause Detection', id: 'gesture-page-fist' },
+                { gesture: '👉 Swipe Right', action: 'Go to Hospital', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Go to About', id: 'gesture-page-swipe-left' }
+            ],
+            'detection': [
+                { gesture: '☝ 1 Finger', action: 'Raw Cursor Tracking', id: 'gesture-page-one-finger' },
+                { gesture: '✌ 2 Fingers', action: 'Diagnostics Mode', id: 'gesture-page-two-fingers' }
+            ],
+            'mouse': [
+                { gesture: '☝ 1 Finger', action: 'Cursor Position', id: 'gesture-page-one-finger' },
+                { gesture: '✌ 2 Fingers', action: 'Trigger Left Click', id: 'gesture-page-two-fingers' }
+            ],
+            'hospital': [
+                { gesture: '👉 Swipe Right', action: 'Next Patient Card', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Prev Patient Card', id: 'gesture-page-swipe-left' },
+                { gesture: '🖐 Open Palm', action: 'Pause Monitor', id: 'gesture-page-open-palm' },
+                { gesture: '🤚 Palm Near Cam', action: 'Emergency Alarm', id: 'gesture-page-near-cam' }
+            ],
+            'presentation': [
+                { gesture: '👉 Swipe Right', action: 'Next Slide', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Previous Slide', id: 'gesture-page-swipe-left' },
+                { gesture: '✌ 2 Fingers', action: 'Start Presentation', id: 'gesture-page-two-fingers' },
+                { gesture: '🖐 Open Palm', action: 'Pause Presentation', id: 'gesture-page-open-palm' }
+            ],
+            'gallery': [
+                { gesture: '👉 Swipe Right', action: 'Next Picture', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Previous Picture', id: 'gesture-page-swipe-left' },
+                { gesture: '✌ 2 Fingers', action: 'Zoom / View Full', id: 'gesture-page-two-fingers' },
+                { gesture: '👊 Closed Fist', action: 'Close Zoom Overlay', id: 'gesture-page-fist' }
+            ],
+            'drawing': [
+                { gesture: '☝ 1 Finger', action: 'Draw on Canvas', id: 'gesture-page-one-finger' },
+                { gesture: '🖐 Open Palm', action: 'Erase / Clear Canvas', id: 'gesture-page-open-palm' },
+                { gesture: '✌ 2 Fingers', action: 'Select Color Swatches', id: 'gesture-page-two-fingers' }
+            ],
+            'video': [
+                { gesture: '👍 Thumbs Up', action: 'Play Player', id: 'gesture-page-thumbs-up' },
+                { gesture: '🖐 Open Palm', action: 'Pause Player', id: 'gesture-page-open-palm' },
+                { gesture: '👉 Swipe Right', action: 'Fast Forward 10s', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Rewind 10s', id: 'gesture-page-swipe-left' },
+                { gesture: '✌ 2 Fingers', action: 'Adjust Volume (Vertical)', id: 'gesture-page-two-fingers' }
+            ],
+            'login': [
+                { gesture: '🖐 Open Palm', action: 'Scan Biometric ID', id: 'gesture-page-open-palm' },
+                { gesture: '👍 Thumbs Up', action: 'Confirm & Login', id: 'gesture-page-thumbs-up' },
+                { gesture: '👎 Thumbs Down', action: 'Cancel Scan', id: 'gesture-page-thumbs-down' }
+            ],
+            'emergency': [
+                { gesture: '👊 Closed Fist', action: 'Emergency Shutdown', id: 'gesture-page-fist' },
+                { gesture: '🖐 Open Palm', action: 'Deactivate / Stop Alert', id: 'gesture-page-open-palm' }
+            ],
+            'settings': [
+                { gesture: '👉 Swipe Right', action: 'Increase Setting Value', id: 'gesture-page-swipe-right' },
+                { gesture: '👈 Swipe Left', action: 'Decrease Setting Value', id: 'gesture-page-swipe-left' }
+            ],
+            'about': [
+                { gesture: '👉 Swipe Right', action: 'Browse Features', id: 'gesture-page-swipe-right' }
+            ],
+            'contact': [
+                { gesture: '✌ 2 Fingers', action: 'Submit Contact Form', id: 'gesture-page-two-fingers' },
+                { gesture: '🖐 Open Palm', action: 'Reset Form Fields', id: 'gesture-page-open-palm' }
+            ]
+        };
+
+        function updateGestureHUD() {
+            const titleEl = document.getElementById('page-gestures-title');
+            const listEl = document.getElementById('page-gestures-list');
+            if (!titleEl || !listEl) return;
+
+            const pageTitle = currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+            titleEl.textContent = `${pageTitle} Actions`;
+
+            const gestures = PAGE_GESTURES[currentPage] || [];
+            if (gestures.length === 0) {
+                listEl.innerHTML = `<div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding: 5px 10px;">No specific actions</div>`;
+                return;
+            }
+
+            listEl.innerHTML = gestures.map(g => `
+        <div class="gesture-item" id="${g.id}">
+            <span class="gesture-name">${g.gesture}</span>
+            <span class="gesture-action">${g.action}</span>
+        </div>
+    `).join('');
+        }
+
+        function highlightActiveGesture(gestureId, isActive) {
+            const el = document.getElementById(gestureId);
+            if (el) {
+                if (isActive) {
+                    el.classList.add('active-gesture');
+                } else {
+                    el.classList.remove('active-gesture');
+                }
+            }
+        }
+
+        function switchPage(pageId) {
+            if (!pages.includes(pageId)) return;
+
+            // Hide all
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            // Show target
+            document.getElementById(pageId).classList.add('active');
+            const navItem = document.querySelector(`.nav-item[onclick="switchPage('${pageId}')"]`);
+            if (navItem) navItem.classList.add('active');
+
+            currentPage = pageId;
+            window.scrollTo(0, 0);
+            showToast(`Navigated to ${pageId.charAt(0).toUpperCase() + pageId.slice(1)}`);
+            updateGestureHUD();
+
+            // Transition background mesh gradient
+            document.body.className = '';
+            document.body.classList.add(`bg-${pageId}`);
+        }
+
+        // --- Toast UI ---
+        function showToast(msg, icon = 'fa-solid fa-hand-sparkles') {
+            const toast = document.getElementById('gesture-toast');
+            toast.innerHTML = `<i class="${icon}"></i> <span>${msg}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // --- Gesture Variables ---
+        const video = document.getElementById('webcam');
+        const canvasCtx = document.getElementById('vision-overlay').getContext('2d');
+        const cursor = document.getElementById('virtual-cursor');
+
+        let isDetectionActive = true;
+        let isEmergencyAlert = false;
+
+        // Cursor Smoothing
+        let rCursorX = window.innerWidth / 2;
+        let rCursorY = window.innerHeight / 2;
+        let smoothing = 0.2;
+
+        // Swipe Tracking
+        let wristHistory = [];
+        let lastSwipeTime = 0;
+
+        // Specific page variables
+        let drawCtx = null;
+        let isDrawing = false;
+        let currentSlide = 0;
+        let currentGallery = 0;
+        let videoPlayer = null;
+        let twoFingersClicked = false;
+
+        window.onload = () => {
+            // Canvas setup
+            const drawCanvas = document.getElementById('draw-canvas');
+            if (drawCanvas) {
+                drawCanvas.width = drawCanvas.offsetWidth;
+                drawCanvas.height = drawCanvas.offsetHeight;
+                drawCtx = drawCanvas.getContext('2d');
+                drawCtx.lineWidth = 5;
+                drawCtx.lineCap = 'round';
+                drawCtx.strokeStyle = '#00f0ff';
+            }
+            videoPlayer = document.getElementById('smart-video-player');
+
+            // Load persisted settings
+            const savedSmoothing = localStorage.getItem('aura_smoothing');
+            if (savedSmoothing) {
+                smoothing = parseFloat(savedSmoothing);
+                const smoothSlider = document.getElementById('setting-smoothing');
+                const smoothValDisp = document.getElementById('val-smoothing-display');
+                if (smoothSlider) smoothSlider.value = savedSmoothing;
+                if (smoothValDisp) smoothValDisp.innerText = savedSmoothing;
+            }
+            const savedBrightness = localStorage.getItem('aura_brightness');
+            if (savedBrightness) {
+                const brightSlider = document.getElementById('setting-brightness');
+                const brightValDisp = document.getElementById('val-brightness-display');
+                if (brightSlider) brightSlider.value = savedBrightness;
+                if (brightValDisp) brightValDisp.innerText = savedBrightness;
+                const overlay = document.getElementById('vision-overlay');
+                const webcam = document.getElementById('webcam');
+                if (overlay) overlay.style.opacity = savedBrightness;
+                if (webcam) webcam.style.opacity = savedBrightness;
+            }
+
+            updateHospitalPatient();
+            updateGestureHUD();
+            document.body.classList.add('bg-home');
+        };
+
+        // --- Gesture Detection Engine ---
+        function calculateDistance(p1, p2) {
+            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        }
+
+        function triggerClick(x, y) {
+            const elements = document.elementsFromPoint(x, y);
+            const interactable = elements.find(el =>
+                el.classList.contains('interactable') ||
+                el.tagName === 'BUTTON' ||
+                el.tagName === 'INPUT' ||
+                el.classList.contains('nav-item') ||
+                el.classList.contains('color-swatch')
+            );
+
+            if (interactable) {
+                interactable.click();
+
+                // Ripple
+                const ripple = document.createElement('div');
+                ripple.style.position = 'fixed';
+                ripple.style.left = (x - 20) + 'px';
+                ripple.style.top = (y - 20) + 'px';
+                ripple.style.width = '40px'; ripple.style.height = '40px';
+                ripple.style.background = 'var(--primary)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.opacity = '0.5';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.zIndex = '10001';
+                ripple.style.transition = 'all 0.5s ease-out';
+                document.body.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.style.transform = 'scale(3)';
+                    ripple.style.opacity = '0';
+                }, 10);
+                setTimeout(() => ripple.remove(), 500);
+            }
+        }
+
+        let lastGesture = "";
+        let gestureCooldown = 0;
+
+        function handleGestures(landmarks) {
+            if (!isDetectionActive) return;
+
+            // Core landmark indices
+            const wrist = landmarks[0];
+            const thumbTip = landmarks[4];
+            const indexTip = landmarks[8];
+            const middleTip = landmarks[12];
+            const ringTip = landmarks[16];
+            const pinkyTip = landmarks[20];
+
+            // Determine fingers up
+            // Compare tip y to mcp y (for standard upright hand)
+            const isIndexUp = indexTip.y < landmarks[6].y;
+            const isMiddleUp = middleTip.y < landmarks[10].y;
+            const isRingUp = ringTip.y < landmarks[14].y;
+            const isPinkyUp = pinkyTip.y < landmarks[18].y;
+
+            // Thumb is trickier, depends on x usually, but we'll use distance from palm center roughly
+            const isThumbOut = Math.abs(thumbTip.x - landmarks[17].x) > 0.1;
+
+            const fingersUpCount = [isIndexUp, isMiddleUp, isRingUp, isPinkyUp].filter(v => v).length + (isThumbOut ? 1 : 0);
+
+            // Gestures
+            const isPinch = calculateDistance(thumbTip, indexTip) < 0.05;
+            const isFist = fingersUpCount === 0 && !isPinch;
+            const isThreeFingers = fingersUpCount === 3;
+            const isFourFingers = fingersUpCount === 4;
+            const isOpenPalm = fingersUpCount === 5;
+            const isOneFinger = isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp && !isPinch;
+            const isTwoFingers = isIndexUp && isMiddleUp && !isRingUp && !isPinkyUp;
+
+            // Thumbs Up/Down
+            const isThumbsUp = isThumbOut && !isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp && thumbTip.y < wrist.y - 0.1;
+            const isThumbsDown = isThumbOut && !isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp && thumbTip.y > wrist.y + 0.1;
+
+            // Swipe & Scroll Velocity Tracking
+            const now = Date.now();
+            wristHistory.push({ x: wrist.x, y: wrist.y, time: now });
+            if (wristHistory.length > 10) wristHistory.shift();
+
+            let swipeDir = null;
+            let isScrollUp = false;
+            let isScrollDown = false;
+
+            // Static posture scrolling (3 Fingers up to Scroll Up, 4 Fingers up to Scroll Down)
+            if (isThreeFingers) {
+                isScrollUp = true;
+                if (now - lastSwipeTime > 350) {
+                    const mainContainer = document.querySelector('.main-content');
+                    if (mainContainer) {
+                        mainContainer.scrollBy({ top: -220, behavior: 'smooth' });
+                        showToast("Scrolling Up", "fa-solid fa-arrow-up");
+                        lastSwipeTime = now;
+                    }
+                }
+            }
+
+            if (isFourFingers) {
+                isScrollDown = true;
+                if (now - lastSwipeTime > 350) {
+                    const mainContainer = document.querySelector('.main-content');
+                    if (mainContainer) {
+                        mainContainer.scrollBy({ top: 220, behavior: 'smooth' });
+                        showToast("Scrolling Down", "fa-solid fa-arrow-down");
+                        lastSwipeTime = now;
+                    }
+                }
+            }
+
+            if (now - lastSwipeTime > 800 && wristHistory.length === 10) {
+                const dx = wristHistory[9].x - wristHistory[0].x;
+
+                // Swipe checks
+                if (dx > 0.2) { swipeDir = 'left'; lastSwipeTime = now; } // moved right in normalized space -> actual left swipe
+                if (dx < -0.2) { swipeDir = 'right'; lastSwipeTime = now; } // moved left in normalized space -> actual right swipe
+
+                // Vertical motion for Open Palm Moving Up
+                if (isOpenPalm) {
+                    const dy = wristHistory[9].y - wristHistory[0].y;
+                    // Normalized y: 0 is top, 1 is bottom. If hand moves UP visually, y decreases.
+                    if (dy < -0.15) {
+                        isScrollUp = true;
+                        lastSwipeTime = now;
+                        const mainContainer = document.querySelector('.main-content');
+                        if (mainContainer) {
+                            mainContainer.scrollBy({ top: -250, behavior: 'smooth' });
+                            showToast("Scrolling Up", "fa-solid fa-arrow-up");
+                        }
+                    }
+                }
+
+                // Horizontal motion for Closed Fist Moving Right
+                if (isFist) {
+                    // Under scaleX(-1) mirror mode, moving right visually decreases normalized x.
+                    if (dx < -0.15) {
+                        isScrollDown = true;
+                        lastSwipeTime = now;
+                        const mainContainer = document.querySelector('.main-content');
+                        if (mainContainer) {
+                            mainContainer.scrollBy({ top: 250, behavior: 'smooth' });
+                            showToast("Scrolling Down", "fa-solid fa-arrow-down");
+                        }
+                    }
+                }
+            }
+
+            // Emergency Detection (Palm Near Camera -> Bounding box large)
+            let minX = 1, maxX = 0, minY = 1, maxY = 0;
+            landmarks.forEach(lm => {
+                if (lm.x < minX) minX = lm.x;
+                if (lm.x > maxX) maxX = lm.x;
+                if (lm.y < minY) minY = lm.y;
+                if (lm.y > maxY) maxY = lm.y;
+            });
+            const boxArea = (maxX - minX) * (maxY - minY);
+            const isNearCamera = boxArea > 0.4 && isOpenPalm;
+
+            // --- Action Dispatching ---
+
+            // Clear all HUD active glows first
+            document.querySelectorAll('.gesture-item').forEach(el => el.classList.remove('active-gesture'));
+
+            // Highlight Global scroll states if active
+            if (isScrollUp) highlightActiveGesture('gesture-global-scroll-up', true);
+            if (isScrollDown) highlightActiveGesture('gesture-global-scroll-down', true);
+
+            // 1. Cursor Movement (mapped to Index Tip)
+            // Map normalized coords to screen. Flip X. Only move cursor on 1 Finger or preparing a 2-Finger Click.
+            if (isOneFinger || isTwoFingers) {
+                const targetX = (1 - indexTip.x) * window.innerWidth;
+                const targetY = indexTip.y * window.innerHeight;
+
+                rCursorX += (targetX - rCursorX) * smoothing;
+                rCursorY += (targetY - rCursorY) * smoothing;
+
+                cursor.style.display = 'block';
+                cursor.style.left = (rCursorX - 10) + 'px';
+                cursor.style.top = (rCursorY - 10) + 'px';
+
+                // Highlight hover targets
+                const elements = document.elementsFromPoint(rCursorX, rCursorY);
+                document.querySelectorAll('.gesture-hover').forEach(el => el.classList.remove('gesture-hover'));
+                const hoverable = elements.find(el => el.classList.contains('interactable') || el.tagName === 'BUTTON' || el.classList.contains('nav-item'));
+                if (hoverable) hoverable.classList.add('gesture-hover');
+
+                if (isOneFinger) {
+                    highlightActiveGesture('gesture-global-cursor', true);
+                    highlightActiveGesture('gesture-page-one-finger', true);
+                }
+            } else {
+                cursor.style.display = 'none';
+                document.querySelectorAll('.gesture-hover').forEach(el => el.classList.remove('gesture-hover'));
+            }
+
+            // 2. Select Option (2 Fingers transition click)
+            if (isTwoFingers) {
+                highlightActiveGesture('gesture-global-click', true);
+                highlightActiveGesture('gesture-page-two-fingers', true);
+
+                if (!twoFingersClicked && now > gestureCooldown) {
+                    cursor.classList.add('clicking');
+                    triggerClick(rCursorX, rCursorY);
+                    twoFingersClicked = true;
+                    gestureCooldown = now + 800; // prevent double clicks
+                }
+            } else {
+                twoFingersClicked = false;
+                cursor.classList.remove('clicking');
+            }
+
+            // Highlight other generic gestures in HUD
+            if (isThreeFingers) highlightActiveGesture('gesture-global-scroll-up', true);
+            if (isFourFingers) highlightActiveGesture('gesture-global-scroll-down', true);
+            if (isOpenPalm) highlightActiveGesture('gesture-page-open-palm', true);
+            if (isFist) highlightActiveGesture('gesture-page-fist', true);
+            if (isThumbsUp) highlightActiveGesture('gesture-page-thumbs-up', true);
+            if (isThumbsDown) highlightActiveGesture('gesture-page-thumbs-down', true);
+            if (isNearCamera) highlightActiveGesture('gesture-page-near-cam', true);
+            if (swipeDir === 'right') highlightActiveGesture('gesture-page-swipe-right', true);
+            if (swipeDir === 'left') highlightActiveGesture('gesture-page-swipe-left', true);
+
+            if (now < gestureCooldown) return;
+
+            // --- Global Actions ---
+            if (isNearCamera) {
+                triggerEmergency();
+                gestureCooldown = now + 2000;
+                return;
+            }
+
+            // --- Page Specific Logic ---
+            switch (currentPage) {
+                case 'home':
+                    if (swipeDir === 'right') switchPage('hospital');
+                    if (swipeDir === 'left') switchPage('about');
+                    break;
+
+                case 'mouse':
+                    // Controlled via global 2-finger click!
+                    break;
+
+                case 'hospital':
+                    if (swipeDir === 'right') {
+                        activePatientIndex = (activePatientIndex + 1) % hospitalPatients.length;
+                        updateHospitalPatient();
+                        showToast(`Browsed: ${hospitalPatients[activePatientIndex].name}`);
+                    }
+                    if (swipeDir === 'left') {
+                        activePatientIndex = (activePatientIndex - 1 + hospitalPatients.length) % hospitalPatients.length;
+                        updateHospitalPatient();
+                        showToast(`Browsed: ${hospitalPatients[activePatientIndex].name}`);
+                    }
+                    if (isOpenPalm) showToast("Monitoring Paused", "fa-solid fa-pause");
+                    break;
+
+                case 'presentation':
+                    if (swipeDir === 'right') changeSlide(1);
+                    if (swipeDir === 'left') changeSlide(-1);
+                    if (isTwoFingers) showToast("Presentation Started", "fa-solid fa-play");
+                    if (isOpenPalm) showToast("Presentation Paused", "fa-solid fa-pause");
+                    break;
+
+                case 'gallery':
+                    if (swipeDir === 'right') changeGallery(1);
+                    if (swipeDir === 'left') changeGallery(-1);
+                    if (isTwoFingers) {
+                        const items = document.querySelectorAll('.gallery-item');
+                        const activeItem = items[currentGallery];
+                        if (activeItem) activeItem.click(); // Trigger the lightbox modal!
+                    }
+                    if (isFist) {
+                        closeLightbox();
+                    }
+                    break;
+
+                case 'drawing':
+                    if (isOneFinger && drawCtx) {
+                        if (!isDrawing) { drawCtx.beginPath(); drawCtx.moveTo(rCursorX - document.getElementById('draw-canvas').getBoundingClientRect().left, rCursorY - document.getElementById('draw-canvas').getBoundingClientRect().top); isDrawing = true; }
+                        else { drawCtx.lineTo(rCursorX - document.getElementById('draw-canvas').getBoundingClientRect().left, rCursorY - document.getElementById('draw-canvas').getBoundingClientRect().top); drawCtx.stroke(); }
+                    } else {
+                        isDrawing = false;
+                    }
+                    if (isOpenPalm && drawCtx) {
+                        drawCtx.clearRect(0, 0, 10000, 10000); // Erase
+                        showToast("Canvas Cleared", "fa-solid fa-eraser");
+                        gestureCooldown = now + 1000;
+                    }
+                    break;
+
+                case 'video':
+                    if (isOpenPalm) { videoPlayer?.pause(); showToast("Video Paused"); gestureCooldown = now + 1000; }
+                    if (isThumbsUp) { videoPlayer?.play(); showToast("Video Playing"); gestureCooldown = now + 1000; }
+                    if (swipeDir === 'right') { videoPlayer.currentTime += 10; showToast("Forward 10s"); }
+                    if (swipeDir === 'left') { videoPlayer.currentTime -= 10; showToast("Rewind 10s"); }
+                    if (isTwoFingers) {
+                        const vol = Math.max(0, Math.min(1, 1 - indexTip.y));
+                        if (videoPlayer) {
+                            videoPlayer.volume = vol;
+                            const volBar = document.getElementById('volume-indicator-bar');
+                            if (volBar) volBar.style.width = (vol * 100) + '%';
+                        }
+                    }
+                    break;
+
+                case 'login':
+                    if (isOpenPalm) {
+                        showToast("Scanning Biometrics...", "fa-solid fa-fingerprint");
+                        const scanText = document.getElementById('biometric-status-text');
+                        const scanLogs = document.getElementById('biometric-logs');
+                        if (scanText && scanText.innerText.includes('Present palm')) {
+                            scanText.innerText = 'Scanning biometric pulse pattern... 65%';
+                            scanText.style.color = 'var(--primary)';
+                            setTimeout(() => {
+                                if (currentPage === 'login') {
+                                    scanText.innerText = 'Scan Complete! Verify with Thumbs Up.';
+                                    scanText.style.color = 'var(--success)';
+                                    if (scanLogs) {
+                                        scanLogs.innerHTML += `<div class="coord-line">[${new Date().toLocaleTimeString()}] scan: Pulse matched clinical record</div>`;
+                                        scanLogs.innerHTML += `<div class="coord-line">[${new Date().toLocaleTimeString()}] auth: Awaiting confirm (Thumbs Up)</div>`;
+                                    }
+                                }
+                            }, 1500);
+                        }
+                    }
+                    if (isThumbsUp) { showToast("Login Confirmed"); setTimeout(() => switchPage('hospital'), 1000); gestureCooldown = now + 2000; }
+                    if (isThumbsDown) { showToast("Login Cancelled"); gestureCooldown = now + 1000; }
+                    break;
+
+                case 'emergency':
+                    if (isFist) {
+                        document.getElementById('global-alert').style.display = 'none';
+                        isEmergencyAlert = false;
+                        showToast("Emergency Shutdown Executed", "fa-solid fa-power-off");
+                        gestureCooldown = now + 2000;
+                    }
+                    if (isOpenPalm) {
+                        document.getElementById('global-alert').style.display = 'none';
+                        isEmergencyAlert = false;
+                        showToast("Alert Stopped", "fa-solid fa-stop");
+                        gestureCooldown = now + 2000;
+                    }
+                    break;
+
+                default:
+                    // Generic fallback for forms, etc.
+                    if (isPinch) {
+                        cursor.classList.add('clicking');
+                        triggerClick(rCursorX, rCursorY);
+                        gestureCooldown = now + 500;
+                    } else {
+                        cursor.classList.remove('clicking');
+                    }
+                    break;
+            }
+
+            // Dynamic diagnostic coordinate matrix printer
+            if (currentPage === 'detection') {
+                const coordPanel = document.getElementById('live-coordinate-stream');
+                if (coordPanel) {
+                    coordPanel.innerHTML = `
+                <div class="coord-line"><b>WRIST [0]:</b> X: ${wrist.x.toFixed(4)}, Y: ${wrist.y.toFixed(4)}, Z: ${wrist.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line"><b>THUMB TIP [4]:</b> X: ${thumbTip.x.toFixed(4)}, Y: ${thumbTip.y.toFixed(4)}, Z: ${thumbTip.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line"><b>INDEX TIP [8]:</b> X: ${indexTip.x.toFixed(4)}, Y: ${indexTip.y.toFixed(4)}, Z: ${indexTip.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line"><b>MIDDLE TIP [12]:</b> X: ${middleTip.x.toFixed(4)}, Y: ${middleTip.y.toFixed(4)}, Z: ${middleTip.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line"><b>RING TIP [16]:</b> X: ${ringTip.x.toFixed(4)}, Y: ${ringTip.y.toFixed(4)}, Z: ${ringTip.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line"><b>PINKY TIP [20]:</b> X: ${pinkyTip.x.toFixed(4)}, Y: ${pinkyTip.y.toFixed(4)}, Z: ${pinkyTip.z?.toFixed(4) || 'N/A'}</div>
+                <div class="coord-line" style="color:var(--success)"><b>ACTIVE POSE:</b> ${isOneFinger ? '1 Finger (Cursor)' : isTwoFingers ? '2 Fingers (Select)' : isOpenPalm ? 'Open Palm' : isFist ? 'Fist' : 'Other'}</div>
+            `;
+                }
+            }
+        }
+
+        // --- Specific Page Helpers ---
+        function changeSlide(dir) {
+            const slides = document.querySelectorAll('.slide');
+            if (!slides.length) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + dir + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            showToast(`Slide ${currentSlide + 1}`, "fa-solid fa-images");
+        }
+
+        function changeGallery(dir) {
+            const items = document.querySelectorAll('.gallery-item');
+            if (!items.length) return;
+            items[currentGallery].classList.remove('active');
+            currentGallery = (currentGallery + dir + items.length) % items.length;
+            items[currentGallery].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast(`Image ${currentGallery + 1} Selected`);
+        }
+
+        function triggerEmergency() {
+            if (isEmergencyAlert) return;
+            isEmergencyAlert = true;
+            switchPage('emergency');
+            document.getElementById('global-alert').style.display = 'flex';
+            // Optional: play sound
+        }
+
+        function toggleDetection(forceState) {
+            isDetectionActive = forceState !== undefined ? forceState : !isDetectionActive;
+            document.querySelector('.vision-status').innerHTML = isDetectionActive ?
+                '<div class="dot"></div> VISION ACTIVE' :
+                '<i class="fa-solid fa-eye-slash"></i> VISION PAUSED';
+            showToast(isDetectionActive ? "Detection Started" : "Detection Paused");
+        }
+
+        // --- MediaPipe Initialization (Robust Manual Loop) ---
+        const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+        hands.setOptions({
+            maxNumHands: 1, // Focus on primary hand for UI logic
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+        });
+
+        hands.onResults((results) => {
+            // Update HUD Canvas
+            const canvas = document.getElementById('vision-overlay');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                for (const landmarks of results.multiHandLandmarks) {
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00f0ff', lineWidth: 2 });
+                    drawLandmarks(canvasCtx, landmarks, { color: '#ff0055', radius: 2 });
+                    handleGestures(landmarks);
+                }
+            } else {
+                cursor.style.display = 'none';
+            }
+            canvasCtx.restore();
+        });
+
+        let lastVideoTime = -1;
+        async function predictWebcam() {
+            if (video.currentTime !== lastVideoTime) {
+                lastVideoTime = video.currentTime;
+                if (isDetectionActive) {
+                    await hands.send({ image: video });
+                }
+            }
+            requestAnimationFrame(predictWebcam);
+        }
+
+        // Ensure the video plays inline and automatically
+        video.setAttribute('autoplay', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+            .then((stream) => {
+                video.srcObject = stream;
+                video.addEventListener('loadeddata', () => {
+                    predictWebcam();
+                    showToast("Camera Initialized", "fa-solid fa-video");
+                });
+            })
+            .catch((err) => {
+                console.error("Camera access error:", err);
+                showToast("Camera Access Denied", "fa-solid fa-video-slash");
+            });
+
+        // Handle color selection visually
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.addEventListener('click', (e) => {
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+                    e.target.classList.add('active');
+                    if (drawCtx) drawCtx.strokeStyle = e.target.style.backgroundColor;
+                    showToast("Color Selected", "fa-solid fa-palette");
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
