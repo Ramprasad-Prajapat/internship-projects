@@ -20,22 +20,39 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://internship-projects-beige.vercel.app';
 
 // 1. Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: false
 }));
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://internship-projects-beige.vercel.app"
+];
+
+if (FRONTEND_URL && !allowedOrigins.includes(FRONTEND_URL)) {
+  allowedOrigins.push(FRONTEND_URL);
+}
+
 // 2. CORS configuration
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://your-frontend-name.vercel.app",
-    FRONTEND_URL
-  ],
+  origin: function (origin, callback) {
+    console.log("Request Origin:", origin);
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn(`Blocked by CORS: Origin ${origin} is not allowed.`);
+    return callback(new Error(`CORS not allowed for this origin: ${origin}`));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  optionsSuccessStatus: 204
 }));
 
 // 3. Express Rate Limiter
@@ -92,5 +109,6 @@ app.use((err, req, res, next) => {
 // Start listening
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Allowed CORS origins: ${allowedOrigins.join(', ')}`);
 });
 export default app;

@@ -42,7 +42,8 @@ export async function loginUser(email, password, portal) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, portal })
+    body: JSON.stringify({ email, password, portal }),
+    credentials: 'include'
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -62,7 +63,8 @@ export async function registerUser(name, email, password, mobile, role = 'Citize
   const response = await fetch(`${API_BASE_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password, mobile, role, portal })
+    body: JSON.stringify({ name, email, password, mobile, role, portal }),
+    credentials: 'include'
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -78,7 +80,8 @@ export async function verifyForgotDetails(details) {
   const response = await fetch(`${API_BASE_URL}/auth/forgot-password-verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(details)
+    body: JSON.stringify(details),
+    credentials: 'include'
   });
   if (!response.ok) {
     const errorData = await response.json();
@@ -94,7 +97,8 @@ export async function resetPassword(email, newPassword) {
   const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, newPassword })
+    body: JSON.stringify({ email, newPassword }),
+    credentials: 'include'
   });
   if (!response.ok) {
     const errorData = await response.json();
