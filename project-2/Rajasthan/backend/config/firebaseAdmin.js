@@ -17,9 +17,14 @@ let useLocalDb = false;
 let useClientDb = false;
 
 try {
+  const databaseURL = process.env.FIREBASE_DATABASE_URL || `https://${projectId}-default-rtdb.firebaseio.com`;
+
   if (clientEmail && privateKey) {
-    // Replace escaped newlines in private key if loaded from a single line string
-    const formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+    const formattedPrivateKey = privateKey
+      .replace(/\\n/g, '\n')
+      .replace(/^"|"$/g, '')
+      .trim();
+
     app = admin.initializeApp({
       credential: admin.credential.cert({
         projectId,
@@ -27,9 +32,11 @@ try {
         privateKey: formattedPrivateKey,
       }),
       storageBucket,
-      databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`
+      databaseURL
     });
+
     console.log("Firebase Admin SDK initialized using Service Account Certificate.");
+
     db = admin.firestore();
     auth = admin.auth();
     storage = admin.storage();
