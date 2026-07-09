@@ -1,2 +1,9 @@
 .env
 **/.env
+project-4/gamepulse-live/backend/apache-maven-3.9.12/
+project-4/gamepulse-live/backend/apache-maven.zip
+project-4/gamepulse-live/backend/output*.log
+project-4/gamepulse-live/backend/target/
+project-4/gamepulse-live/frontend/.vite/
+project-4/gamepulse-live/frontend/dist/
+project-4/gamepulse-live/frontend/node_modules/
