@@ -1,0 +1,17 @@
+package com.gamepulse.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class TestSecurityConfig {
+    @Bean
+    public SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
+        // For @WebMvcTest contexts, allow all requests without authentication
+        http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+}

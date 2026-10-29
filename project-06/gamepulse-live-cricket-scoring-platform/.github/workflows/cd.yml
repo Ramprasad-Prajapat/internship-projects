@@ -1,0 +1,74 @@
+name: GamePulse Live CD Deployment Pipeline
+
+on:
+  push:
+    branches: [ main, dev, staging ]
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Target Deployment Environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+jobs:
+  deploy-dev:
+    name: 🚀 Deploy to Development
+    if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && inputs.target_env == 'development')
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Backend Service (Dev)
+        run: |
+          echo "Deploying GamePulse Live Backend to Development Environment..."
+          echo "Target API Endpoint: dev-api.gamepulselive.internal"
+
+      - name: Deploy Frontend Service (Dev)
+        run: |
+          echo "Deploying GamePulse Live Frontend to Development SPA Host..."
+          echo "Target App URL: https://dev.gamepulselive.com"
+
+  deploy-staging:
+    name: 🧪 Deploy to Staging
+    if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && inputs.target_env == 'staging')
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Backend Service (Staging)
+        run: |
+          echo "Deploying GamePulse Live Backend to Staging Environment..."
+          echo "Target API Endpoint: staging-api.gamepulselive.internal"
+
+      - name: Deploy Frontend Service (Staging)
+        run: |
+          echo "Deploying GamePulse Live Frontend to Staging CDN..."
+          echo "Target App URL: https://staging.gamepulselive.com"
+
+  deploy-production:
+    name: 🏆 Deploy to Production
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && inputs.target_env == 'production')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Backend Service (Production)
+        run: |
+          echo "Deploying GamePulse Live Production Backend Service..."
+          echo "Target API Endpoint: api.gamepulselive.com"
+
+      - name: Deploy Frontend Service (Production)
+        run: |
+          echo "Deploying GamePulse Live Production Frontend CDN Assets..."
+          echo "Target App URL: https://gamepulselive.com"

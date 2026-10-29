@@ -1,0 +1,116 @@
+/* Playful Geometric Design System Tokens & Utilities */
+
+:root {
+  /* High-Saturation Playful Palette */
+  --color-bg-paper: #FFFDF5;         /* Warm Cream Paper feel */
+  --color-fg-slate: #1E293B;         /* Dark Slate 800 */
+  --color-muted: #F1F5F9;            /* Slate 100 */
+  --color-muted-fg: #64748B;         /* Slate 500 */
+  
+  --color-accent-violet: #8B5CF6;     /* Primary Vivid Violet */
+  --color-secondary-pink: #F472B6;    /* Hot Pink Pop */
+  --color-tertiary-yellow: #FBBF24;   /* Amber Optimism */
+  --color-quaternary-mint: #34D399;   /* Mint Freshness */
+  
+  --color-border-dark: #1E293B;      /* Chunky 2px dark border */
+  --color-card-white: #FFFFFF;       /* Pure White */
+  
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-paper);
+  color: var(--color-fg-slate);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Background Patterns */
+.bg-dot-grid {
+  background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.bg-paper {
+  background-color: var(--color-bg-paper);
+}
+
+/* Hard Shadows (The Signature Pop Shadow) */
+.pop-shadow-sm {
+  box-shadow: 2px 2px 0px 0px #1E293B;
+}
+
+.pop-shadow {
+  box-shadow: 4px 4px 0px 0px #1E293B;
+}
+
+.pop-shadow-lg {
+  box-shadow: 6px 6px 0px 0px #1E293B;
+}
+
+.pop-shadow-xl {
+  box-shadow: 8px 8px 0px 0px #1E293B;
+}
+
+.pop-shadow-pink {
+  box-shadow: 6px 6px 0px 0px #F472B6;
+}
+
+.pop-shadow-yellow {
+  box-shadow: 6px 6px 0px 0px #FBBF24;
+}
+
+.pop-shadow-violet {
+  box-shadow: 6px 6px 0px 0px #8B5CF6;
+}
+
+.pop-shadow-mint {
+  box-shadow: 6px 6px 0px 0px #34D399;
+}
+
+/* Interactive Pop Bounce Hover */
+.pop-button {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 4px 4px 0px 0px #1E293B;
+  border: 2px solid #1E293B;
+}
+
+.pop-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #1E293B;
+}
+
+.pop-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #1E293B;
+}
+
+.sticker-card {
+  background-color: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 1.25rem;
+  box-shadow: 6px 6px 0px 0px #1E293B;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sticker-card:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 8px 8px 0px 0px #1E293B;
+}
+
+/* Special Blob Radii */
+.rounded-blob {
+  border-radius: 1.5rem 1.5rem 1.5rem 0.25rem;
+}
+
+.rounded-blob-alt {
+  border-radius: 2rem 0.5rem 2rem 2rem;
+}

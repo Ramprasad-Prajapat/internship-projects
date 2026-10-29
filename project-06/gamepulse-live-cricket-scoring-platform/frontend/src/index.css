@@ -1,0 +1,36 @@
+@import './styles/design-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#FFFDF5] text-[#1E293B] antialiased font-sans bg-dot-grid;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-weight: 800;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFDF5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 9999px;
+  border: 2px solid #FFFDF5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B5CF6;
+}
