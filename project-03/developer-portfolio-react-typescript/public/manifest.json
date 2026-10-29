@@ -1,0 +1,17 @@
+{
+  "short_name": "Ramprasad Portfolio",
+  "name": "Ramprasad | Senior Java Full Stack Developer",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0d14",
+  "theme_color": "#0a0d14",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "description": "Portfolio of Ramprasad, Senior Java Full Stack Developer specializing in Java, Spring Boot, Microservices, and React."
+}
