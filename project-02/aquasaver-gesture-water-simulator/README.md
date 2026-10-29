@@ -1,5 +1,8 @@
 ﻿# aquasaver-gesture-water-simulator
 
+**Live Demo:** [https://aquasaver-gesture-water-simulator.vercel.app](https://aquasaver-gesture-water-simulator.vercel.app)
+
+
 An interactive environmental simulation and awareness web application that utilizes computer vision for touchless interaction. Users control a virtual leaking tap using webcam hand gestures to conserve water and learn sustainable habits.
 
 ## Tech Stack
@@ -35,3 +38,4 @@ aquasaver-gesture-water-simulator/
 
 ## Environment Variables / Config
 - None required (entirely client-side)
+

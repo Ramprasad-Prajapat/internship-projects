@@ -1,5 +1,8 @@
 ﻿# smart-office-voice-dashboard
 
+**Live Demo:** [https://smart-office-voice-dashboard.vercel.app](https://smart-office-voice-dashboard.vercel.app)
+
+
 A voice-activated smart office operations portal that enables occupants and facilities administrators to monitor building analytics, book meeting rooms, check biometric logs, and adjust ambient settings touchlessly.
 
 ## Tech Stack
@@ -33,3 +36,4 @@ smart-office-voice-dashboard/
 
 ## Environment Variables / Config
 - None required (client-side only)
+

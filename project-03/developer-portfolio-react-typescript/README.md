@@ -1,5 +1,8 @@
 ﻿# developer-portfolio-react-typescript
 
+**Live Demo:** [https://developer-portfolio-react-typescript.vercel.app](https://developer-portfolio-react-typescript.vercel.app)
+
+
 A modern, high-performance developer portfolio web application built with React 19, TypeScript, and Tailwind CSS. It highlights featured software projects, interactive skill breakdowns, career milestones, and direct contact workflows.
 
 ## Tech Stack
@@ -52,3 +55,4 @@ developer-portfolio-react-typescript/
 - VITE_APP_ENV: Application environment (development / production)
 - VITE_API_BASE_URL: Optional backend API endpoint for contact messages
 - VITE_ENABLE_ANALYTICS: Flag for analytics tracking (	rue / alse)
+

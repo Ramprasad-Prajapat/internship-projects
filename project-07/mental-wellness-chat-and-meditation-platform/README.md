@@ -1,5 +1,8 @@
 ﻿# mental-wellness-chat-and-meditation-platform
 
+**Live Demo:** [https://mental-wellness-chat-and-meditation-platform.vercel.app](https://mental-wellness-chat-and-meditation-platform.vercel.app)
+
+
 An emotional wellness companion and mental health support web application designed to help individuals navigate feelings, track mental wellness trends, and practice mindfulness through guided meditation.
 
 ## Tech Stack
@@ -33,3 +36,4 @@ mental-wellness-chat-and-meditation-platform/
 
 ## Environment Variables / Config
 - None required (client-side only)
+

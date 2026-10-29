@@ -1,5 +1,8 @@
 ﻿# facetrack-ai-attendance-system
 
+**Live Demo:** [https://facetrack-ai-attendance-system.vercel.app](https://facetrack-ai-attendance-system.vercel.app)
+
+
 A multi-branch corporate attendance SaaS platform combining webcam facial recognition simulation with geofencing to prevent proxy attendance and streamline HR operations across multiple office locations.
 
 ## Tech Stack
@@ -45,3 +48,4 @@ facetrack-ai-attendance-system/
 ## Environment Variables / Config
 - VITE_API_MODE: Data source mode (default: mock)
 - VITE_FIREBASE_API_KEY: Placeholder for future Firebase authentication integration
+

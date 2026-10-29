@@ -1,5 +1,8 @@
 ﻿# vocalic-voice-calculator-web-app
 
+**Live Demo:** [https://vocalic-voice-calculator-web-app.vercel.app](https://vocalic-voice-calculator-web-app.vercel.app)
+
+
 A voice-activated cosmic glassmorphic calculator web application allowing users to compute mathematical expressions through continuous speech recognition or interactive tactile on-screen controls, with synthesized voice readout of answers.
 
 ## Tech Stack
@@ -34,3 +37,4 @@ vocalic-voice-calculator-web-app/
 
 ## Environment Variables / Config
 - None required (client-side only)
+

@@ -27,6 +27,7 @@ local.properties
 # IDE and Editor configs
 .idea/
 .vscode/
+.vercel/
 *.suo
 *.ntvs*
 *.njsproj
