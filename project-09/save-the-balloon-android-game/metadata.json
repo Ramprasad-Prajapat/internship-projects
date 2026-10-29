@@ -1,0 +1,6 @@
+{
+  "name": "Save the Balloon",
+  "description": "Keep the balloon safe from spikes, birds, needles, moving clouds, and rockets while collecting coins and power-ups!",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
