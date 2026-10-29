@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Home Control Using Hand Signs</title>
+  <meta name="description" content="Webcam based hand gesture smart home control simulation dashboard built with HTML, CSS and JavaScript." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+</head>
+<body>
+
+  <!-- ====================== NAVBAR ====================== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#home" class="brand" data-link="home">
+        <span class="brand-logo">🏠</span>
+        <span class="brand-text">SmartHome<span class="brand-accent">Gestures</span></span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#home"     class="nav-link active" data-link="home">Home</a>
+        <a href="#gesture"  class="nav-link" data-link="gesture">Gesture Control</a>
+        <a href="#devices"  class="nav-link" data-link="devices">Devices</a>
+        <a href="#rooms"    class="nav-link" data-link="rooms">Rooms</a>
+        <a href="#scenes"   class="nav-link" data-link="scenes">Scenes</a>
+        <a href="#logs"     class="nav-link" data-link="logs">Logs</a>
+        <a href="#settings" class="nav-link" data-link="settings">Settings</a>
+        <a href="#about"    class="nav-link" data-link="about">About</a>
+      </nav>
+
+      <div class="nav-actions">
+        <span class="cam-pill" id="navCamPill"><span class="dot"></span> Camera Off</span>
+        <button class="icon-btn" id="themeToggle" title="Toggle theme">🌙</button>
+        <button class="icon-btn menu-btn" id="menuBtn" title="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================== HOME ====================== -->
+  <section id="home" class="section active-section">
+    <div class="hero">
+      <div class="hero-left">
+        <span class="badge-pill">✨ Touchless Smart Home Simulation</span>
+        <h1 class="hero-title">Smart Home Control <span class="grad-text">Using Hand Signs</span></h1>
+        <p class="hero-sub">Control your virtual smart home using simple and stable hand gestures through your webcam. No remote, no switches — just your hand.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" data-link="gesture">🎥 Start Gesture Control</button>
+          <button class="btn btn-ghost" data-link="devices">📋 View Devices</button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hstat"><span class="hstat-num" id="homeTotalDevices">8</span><span class="hstat-label">Total Devices</span></div>
+          <div class="hstat"><span class="hstat-num" id="homeActiveDevices">0</span><span class="hstat-label">Active Devices</span></div>
+          <div class="hstat"><span class="hstat-num" id="homeSelectedRoom">—</span><span class="hstat-label">Selected Room</span></div>
+          <div class="hstat"><span class="hstat-num" id="homeCamStatus">Off</span><span class="hstat-label">Camera Status</span></div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="preview-card glass">
+          <div class="preview-head">
+            <span>🏠 Smart Home Preview</span>
+            <span class="live-dot" id="previewLive">● Live</span>
+          </div>
+          <div class="preview-grid">
+            <div class="pv-item"><span class="pv-ico">📦</span><div><b id="pvTotal">8</b><small>Devices</small></div></div>
+            <div class="pv-item"><span class="pv-ico">⚡</span><div><b id="pvActive">0</b><small>Active</small></div></div>
+            <div class="pv-item"><span class="pv-ico">🛋️</span><div><b id="pvRoom">—</b><small>Room</small></div></div>
+            <div class="pv-item"><span class="pv-ico">🎥</span><div><b id="pvCam">Off</b><small>Camera</small></div></div>
+            <div class="pv-item"><span class="pv-ico">🔋</span><div><b id="pvEnergy">0 W</b><small>Energy</small></div></div>
+            <div class="pv-item"><span class="pv-ico">🔒</span><div><b id="pvDoor">Locked</b><small>Main Door</small></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sec-title">Why this project stands out</h2>
+    <div class="feature-grid">
+      <div class="feature-card glass"><span class="fc-ico">🎥</span><h3>Camera Based Control</h3><p>Real webcam hand tracking powered by Google MediaPipe.</p></div>
+      <div class="feature-card glass"><span class="fc-ico">🎯</span><h3>Stable Gesture Detection</h3><p>Confidence + hold-time + cooldown stop false triggers.</p></div>
+      <div class="feature-card glass"><span class="fc-ico">📊</span><h3>Smart Room Dashboard</h3><p>Live room status, energy usage and device counts.</p></div>
+      <div class="feature-card glass"><span class="fc-ico">🖱️</span><h3>Manual Control Backup</h3><p>Every action also works with buttons — camera optional.</p></div>
+      <div class="feature-card glass"><span class="fc-ico">📝</span><h3>Activity Logs</h3><p>Every gesture & manual action is logged and saved.</p></div>
+      <div class="feature-card glass"><span class="fc-ico">🌈</span><h3>Modern Smart Home UI</h3><p>Glassmorphism, neon accents, dark/light theme.</p></div>
+    </div>
+  </section>
+
+  <!-- ====================== GESTURE CONTROL ====================== -->
+  <section id="gesture" class="section">
+    <h2 class="sec-title">🎥 Gesture Control</h2>
+    <p class="sec-sub">Select a device, then hold an allowed gesture steady to trigger an action.</p>
+
+    <div class="gesture-layout">
+      <!-- Left: camera -->
+      <div class="glass cam-panel">
+        <div class="cam-wrap">
+          <video id="webcam" autoplay playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div class="cam-placeholder" id="camPlaceholder">
+            <span class="cam-ph-ico">📷</span>
+            <p>Camera permission required.<br>Click <b>Start Camera</b> to begin.</p>
+          </div>
+          <div class="cam-status-chip" id="camStatusChip"><span class="dot"></span> Inactive</div>
+        </div>
+        <div class="cam-controls">
+          <button class="btn btn-primary" id="startCam">▶ Start Camera</button>
+          <button class="btn btn-danger" id="stopCam" disabled>■ Stop Camera</button>
+        </div>
+        <p class="cam-hint" id="camHint">Manual control is still available even without the camera.</p>
+
+        <div class="gesture-sim">
+          <p class="sim-title">🧪 Gesture Simulator <small>(demo without camera — keys 1-5)</small></p>
+          <div class="sim-btns">
+            <button class="sim-btn" data-gesture="Open Palm">🖐️ Open Palm</button>
+            <button class="sim-btn" data-gesture="Fist">✊ Fist</button>
+            <button class="sim-btn" data-gesture="Thumb Up">👍 Thumb Up</button>
+            <button class="sim-btn" data-gesture="Thumb Down">👎 Thumb Down</button>
+            <button class="sim-btn" data-gesture="OK Sign">👌 OK Sign</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: live state -->
+      <div class="glass state-panel">
+        <div class="state-row"><span>Camera Status</span><b id="stCamera" class="muted">Inactive</b></div>
+        <div class="state-row"><span>Selected Device</span><b id="stDevice" class="muted">None</b></div>
+        <div class="state-row"><span>Selected Room</span><b id="stRoom" class="muted">None</b></div>
+        <div class="state-row"><span>Detected Gesture</span><b id="stGesture" class="accent">No Hand</b></div>
+
+        <div class="state-meter">
+          <div class="meter-label"><span>Confidence</span><span id="stConfText">0%</span></div>
+          <div class="bar"><div class="bar-fill conf" id="confBar"></div></div>
+        </div>
+        <div class="state-meter">
+          <div class="meter-label"><span>Stability</span><span id="stStabText">0%</span></div>
+          <div class="bar"><div class="bar-fill stab" id="stabBar"></div></div>
+        </div>
+
+        <div class="state-row"><span>Command Status</span><b id="stCommand" class="muted">Idle</b></div>
+        <div class="state-row"><span>Cooldown</span><b id="stCooldown" class="ok">Ready</b></div>
+
+        <div id="confirmFlash" class="confirm-flash"></div>
+      </div>
+    </div>
+
+    <!-- Quick control of selected device -->
+    <div class="glass quick-panel" id="quickPanel">
+      <h3>⚡ Quick Control — <span id="quickDeviceName">No device selected</span></h3>
+      <div class="quick-body" id="quickBody">
+        <p class="muted">Select a device from the Devices section to control it here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== DEVICES ====================== -->
+  <section id="devices" class="section">
+    <h2 class="sec-title">📦 Devices</h2>
+    <p class="sec-sub">Select a device, then control it via gesture or manual buttons.</p>
+    <div class="toolbar">
+      <input type="text" id="deviceSearch" class="search" placeholder="🔎 Search devices or rooms..." />
+    </div>
+    <div class="device-grid" id="deviceGrid"></div>
+  </section>
+
+  <!-- ====================== ROOMS ====================== -->
+  <section id="rooms" class="section">
+    <h2 class="sec-title">🛋️ Rooms</h2>
+    <p class="sec-sub">Room-wise smart dashboard. Click a room to open its details.</p>
+    <div class="room-grid" id="roomGrid"></div>
+  </section>
+
+  <!-- ====================== SCENES (new feature) ====================== -->
+  <section id="scenes" class="section">
+    <h2 class="sec-title">🎬 Smart Scenes</h2>
+    <p class="sec-sub">One-tap automation presets — a bonus feature beyond single-device control.</p>
+    <div class="scene-grid" id="sceneGrid"></div>
+  </section>
+
+  <!-- ====================== LOGS ====================== -->
+  <section id="logs" class="section">
+    <h2 class="sec-title">📝 Activity Logs</h2>
+    <div class="toolbar">
+      <span class="muted" id="logCount">0 entries</span>
+      <button class="btn btn-danger sm" id="clearLogs">🗑 Clear Logs</button>
+    </div>
+    <div class="table-wrap glass">
+      <table class="log-table">
+        <thead>
+          <tr><th>Time</th><th>Source</th><th>Gesture</th><th>Room</th><th>Device</th><th>Action</th><th>Status</th></tr>
+        </thead>
+        <tbody id="logBody">
+          <tr class="empty-row"><td colspan="7">No activity yet. Control a device to see logs here.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====================== SETTINGS ====================== -->
+  <section id="settings" class="section">
+    <h2 class="sec-title">⚙️ Settings</h2>
+    <div class="settings-grid">
+      <div class="glass setting-card">
+        <h3>Controls</h3>
+        <label class="switch-row"><span>Gesture Control</span>
+          <label class="switch"><input type="checkbox" id="setGesture" checked><span class="slider"></span></label>
+        </label>
+        <label class="switch-row"><span>Voice Feedback</span>
+          <label class="switch"><input type="checkbox" id="setVoice" checked><span class="slider"></span></label>
+        </label>
+        <label class="switch-row"><span>Theme (Dark / Light)</span>
+          <label class="switch"><input type="checkbox" id="setTheme"><span class="slider"></span></label>
+        </label>
+      </div>
+
+      <div class="glass setting-card">
+        <h3>Detection Tuning</h3>
+        <div class="range-row">
+          <label>Confidence Threshold <b id="confVal">75%</b></label>
+          <input type="range" id="setConfidence" min="50" max="95" value="75" />
+        </div>
+        <div class="range-row">
+          <label>Stable Detection Time <b id="stableVal">1.5s</b></label>
+          <input type="range" id="setStable" min="0.8" max="3" step="0.1" value="1.5" />
+        </div>
+        <div class="range-row">
+          <label>Cooldown Time <b id="cooldownVal">2.0s</b></label>
+          <input type="range" id="setCooldown" min="1" max="5" step="0.5" value="2" />
+        </div>
+      </div>
+
+      <div class="glass setting-card">
+        <h3>Reset & Data</h3>
+        <button class="btn btn-ghost full" id="resetDevices">🔄 Reset All Devices</button>
+        <button class="btn btn-ghost full" id="clearLogs2">🗑 Clear Activity Logs</button>
+        <button class="btn btn-danger full" id="clearAll">⚠ Clear All Saved Data</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ABOUT ====================== -->
+  <section id="about" class="section">
+    <h2 class="sec-title">ℹ️ About This Project</h2>
+    <div class="about-grid">
+      <div class="glass about-card">
+        <h3>Project Overview</h3>
+        <p>A webcam-based smart home gesture control simulation website. It demonstrates the complete workflow of touchless device control — from camera access to device & room status updates.</p>
+        <h3>Problem Statement</h3>
+        <p>Normal smart home apps require a mobile, remote, voice, or switches. Gesture control gives a touchless and interactive way to control devices.</p>
+        <h3>Solution</h3>
+        <p>The website uses camera input, gesture recognition, stable detection, cooldown and manual backup control to simulate smart home automation.</p>
+      </div>
+      <div class="glass about-card">
+        <h3>How It Works</h3>
+        <ol>
+          <li>Camera captures the hand.</li>
+          <li>JavaScript (MediaPipe) detects the gesture.</li>
+          <li>Gesture is checked for confidence & stability.</li>
+          <li>Selected device receives the command.</li>
+          <li>Device and room status update.</li>
+          <li>Activity log is saved to LocalStorage.</li>
+        </ol>
+        <h3>Why Stable Detection Is Needed</h3>
+        <p>Cameras can wrongly detect gestures, so stable detection and cooldown stop repeated/false actions.</p>
+      </div>
+      <div class="glass about-card">
+        <h3>Technology Used</h3>
+        <ul class="tech-list">
+          <li>HTML5</li><li>CSS3 (Glassmorphism)</li><li>JavaScript (ES6)</li>
+          <li>WebCam API (getUserMedia)</li><li>LocalStorage</li>
+          <li>SpeechSynthesis API</li><li>MediaPipe Tasks Vision (CDN)</li>
+        </ul>
+        <h3>Limitations</h3>
+        <p>This is a simulation — real devices are not controlled. Camera accuracy depends on lighting and webcam quality.</p>
+        <h3>Future Scope</h3>
+        <p>ESP32 / Arduino relay control, Firebase database, user login, mobile app, custom gesture training.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Smart Home Control Using Hand Signs — Internship / College Project · Built with HTML, CSS & JavaScript</p>
+  </footer>
+
+  <!-- Room detail modal -->
+  <div class="modal-overlay" id="roomModal">
+    <div class="modal glass" id="roomModalBody"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- MediaPipe Tasks Vision (CDN) loaded as ES module inside script.js -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
