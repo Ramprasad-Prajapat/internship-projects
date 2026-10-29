@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Calculator - Modern Vocalic Math Console</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS variables & Design Tokens --- */
+        :root {
+            /* Cosmic Dark Theme default */
+            --bg-base: #030108;
+            --bg-gradient: radial-gradient(circle at 10% 30%, rgba(255, 0, 127, 0.08), transparent 35%),
+                           radial-gradient(circle at 90% 70%, rgba(112, 0, 255, 0.1), transparent 40%);
+            --panel-bg: rgba(15, 8, 28, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 0, 127, 0.4);
+            
+            --primary: #ff007f;
+            --primary-glow: rgba(255, 0, 127, 0.35);
+            --secondary: #7000ff;
+            --secondary-glow: rgba(112, 0, 255, 0.35);
+            --accent: #00f3ff;
+            --accent-glow: rgba(0, 243, 255, 0.35);
+            --success: #00ff66;
+            
+            --text-main: #f3f1f9;
+            --text-muted: #9c8eb9;
+            
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+            --glow-filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        /* Tech Neon Light Theme overrides */
+        [data-theme="light"] {
+            --bg-base: #f3f2f8;
+            --bg-gradient: radial-gradient(circle at 10% 30%, rgba(255, 0, 127, 0.06), transparent 35%),
+                           radial-gradient(circle at 90% 70%, rgba(0, 243, 255, 0.06), transparent 40%);
+            --panel-bg: rgba(255, 255, 255, 0.8);
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(112, 0, 255, 0.4);
+            
+            --primary: #7000ff;
+            --primary-glow: rgba(112, 0, 255, 0.2);
+            --secondary: #ff007f;
+            --secondary-glow: rgba(255, 0, 127, 0.2);
+            --accent: #0099ff;
+            --accent-glow: rgba(0, 153, 255, 0.2);
+            
+            --text-main: #171226;
+            --text-muted: #6e648e;
+            --glow-filter: drop-shadow(0 0 8px rgba(112, 0, 255, 0.25));
+        }
+
+        /* --- Global Setup --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-glow);
+        }
+
+        /* --- Background Floating Blur Orbs --- */
+        .blur-orb-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.06) 0%, transparent 70%);
+            top: 10%;
+            left: 5%;
+            z-index: -1;
+            animation: float 20s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .blur-orb-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.08) 0%, transparent 70%);
+            bottom: 10%;
+            right: 5%;
+            z-index: -1;
+            animation: float 25s infinite alternate-reverse ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, -20px) scale(1.08); }
+            100% { transform: translate(-20px, 30px) scale(0.95); }
+        }
+
+        /* --- Main Glassmorphic Container Dashboard --- */
+        .console-dashboard {
+            width: 1000px;
+            max-width: 100%;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            overflow: hidden;
+            z-index: 10;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* Column 1: Voice controls & settings side HUD */
+        .hud-sidebar {
+            border-right: 1px solid var(--border-glass);
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .brand-icon {
+            font-size: 24px;
+            color: var(--primary);
+            filter: var(--glow-filter);
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--text-main), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hud-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hud-lbl {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-dropdown {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .control-dropdown:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+        .control-dropdown option {
+            background: #0d0818;
+            color: #ffffff;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .control-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.08);
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--primary);
+            transition: transform 0.2s ease;
+        }
+        .control-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Voice activation mic panel */
+        .mic-panel {
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px;
+            background: rgba(255,255,255,0.01);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .mic-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mic-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .mic-btn.listening {
+            background: var(--primary-glow);
+            color: var(--primary);
+            border-color: var(--primary);
+            animation: pulseGlow 1.8s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 8px var(--primary-glow); }
+            50% { box-shadow: 0 0 20px var(--primary); }
+        }
+
+        .mic-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Column 2: Math Calculator Core Center */
+        .calculator-center {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        /* LCD Screen Segment display */
+        .lcd-display {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            min-height: 110px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            transition: border-color 0.3s ease;
+        }
+        .lcd-display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+        }
+
+        .formula-telemetry {
+            font-family: var(--font-display);
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            min-height: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .active-value-line {
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .cursor-indicator {
+            width: 3px;
+            height: 32px;
+            background: var(--primary);
+            display: inline-block;
+            margin-left: 5px;
+            animation: blinkCursor 1s infinite;
+        }
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Math Buttons grid layout */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .calc-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calc-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .calc-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Operator specific buttons */
+        .calc-btn.op-btn {
+            background: rgba(112, 0, 255, 0.1);
+            border-color: rgba(112, 0, 255, 0.2);
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        .calc-btn.op-btn:hover {
+            background: var(--secondary-glow);
+            border-color: var(--secondary);
+            color: var(--text-main);
+            box-shadow: 0 0 10px var(--secondary-glow);
+        }
+
+        /* Function/Special buttons */
+        .calc-btn.fn-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+        .calc-btn.fn-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* Clear button */
+        .calc-btn.clr-btn {
+            color: #ff3366;
+            background: rgba(255, 51, 102, 0.05);
+            border-color: rgba(255, 51, 102, 0.15);
+        }
+        .calc-btn.clr-btn:hover {
+            background: rgba(255, 51, 102, 0.15);
+            border-color: #ff3366;
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.2);
+        }
+
+        /* Equal button */
+        .calc-btn.eq-btn {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #ffffff;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.25);
+        }
+        .calc-btn.eq-btn:hover {
+            box-shadow: 0 4px 20px rgba(255, 0, 127, 0.45);
+            filter: brightness(1.1);
+        }
+
+        /* Column 3: History log side HUD */
+        .hud-history {
+            border-left: 1px solid var(--border-glass);
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .history-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 4px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .history-item:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--primary-glow);
+            transform: translateX(-3px);
+        }
+
+        .hist-expr {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            font-family: var(--font-display);
+        }
+
+        .hist-res {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-display);
+        }
+
+        .hist-empty {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            gap: 10px;
+            text-align: center;
+        }
+        .hist-empty i {
+            font-size: 28px;
+            color: var(--secondary-glow);
+        }
+
+        .btn-clear-history {
+            background: transparent;
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn-clear-history:hover {
+            color: var(--text-main);
+            border-color: var(--primary-glow);
+            background: rgba(255,255,255,0.01);
+        }
+
+        /* --- Footer controls theme --- */
+        .console-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            width: 1000px;
+            max-width: 100%;
+            padding: 0 10px;
+        }
+
+        .theme-toggle-btn {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--primary-glow);
+            transform: translateY(-1px);
+        }
+
+        .sys-logs {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- Responsive media queries --- */
+        @media (max-width: 900px) {
+            .console-dashboard {
+                grid-template-columns: 1fr;
+            }
+            .hud-sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border-glass);
+            }
+            .hud-history {
+                border-left: none;
+                border-top: 1px solid var(--border-glass);
+                max-height: 250px;
+            }
+            .console-footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Background Blur Orbs -->
+    <div class="blur-orb-1"></div>
+    <div class="blur-orb-2"></div>
+
+    <div class="main-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+        
+        <!-- Main glass console grid container -->
+        <main class="console-dashboard">
+            
+            <!-- Column 1: Voice Calibration Sidebar HUD -->
+            <aside class="hud-sidebar">
+                <div class="brand-container">
+                    <i class="fa-solid fa-microphone-lines brand-icon"></i>
+                    <div class="brand-title">VOCALIC MATH</div>
+                </div>
+
+                <!-- Speech accent selector -->
+                <div class="hud-section">
+                    <span class="hud-lbl"><i class="fa-solid fa-language"></i> SPEAK ACCENT</span>
+                    <select id="sel-voice-accent" class="control-dropdown" onchange="changeVoiceAccent(this.value)">
+                        <option value="default">Default Accent</option>
+                    </select>
+                </div>
+
+                <!-- Voice Pitch slider calibration -->
+                <div class="hud-section">
+                    <span class="hud-lbl"><i class="fa-solid fa-sliders"></i> CALIBRATION</span>
+                    
+                    <div class="slider-group">
+                        <div class="slider-meta">
+                            <span>Vocal Pitch</span>
+                            <span id="pitch-val">1.0</span>
+                        </div>
+                        <input type="range" class="control-slider" id="sld-pitch" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updatePitchValue(this.value)">
+                    </div>
+
+                    <div class="slider-group" style="margin-top: 10px;">
+                        <div class="slider-meta">
+                            <span>Vocal Speed</span>
+                            <span id="speed-val">1.0</span>
+                        </div>
+                        <input type="range" class="control-slider" id="sld-speed" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateSpeedValue(this.value)">
+                    </div>
+                </div>
+
+                <!-- Optional continuous microphone equation listener -->
+                <div class="hud-section" style="margin-top: auto; padding-top: 20px;">
+                    <span class="hud-lbl"><i class="fa-solid fa-wave-square"></i> REAL-TIME INPUT</span>
+                    <div class="mic-panel">
+                        <button class="mic-btn" id="mic-trigger-btn" onclick="toggleMicrophoneInput()" title="Speak Math Equations directly!">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <div class="mic-desc" id="mic-status-desc">Tap mic to speak equations (e.g. "5 plus 15")</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Column 2: Math Calculator Core Center -->
+            <section class="calculator-center">
+                
+                <!-- Digital LCD display glass block -->
+                <div class="lcd-display" id="lcd-container">
+                    <div class="formula-telemetry" id="lbl-formula"></div>
+                    <div class="active-value-line" id="lbl-active-val">
+                        <span id="screen-text">0</span>
+                        <span class="cursor-indicator"></span>
+                    </div>
+                </div>
+
+                <!-- Interactive digital button grid keys -->
+                <div class="calculator-grid">
+                    
+                    <!-- Row 1 keys -->
+                    <button class="calc-btn fn-btn clr-btn" onclick="pressKey('C')">C</button>
+                    <button class="calc-btn fn-btn" onclick="pressKey('DEL')"><i class="fa-solid fa-backspace"></i></button>
+                    <button class="calc-btn fn-btn" onclick="pressKey('%')">%</button>
+                    <button class="calc-btn op-btn" onclick="pressKey('/')">&divide;</button>
+
+                    <!-- Row 2 keys -->
+                    <button class="calc-btn" onclick="pressKey('7')">7</button>
+                    <button class="calc-btn" onclick="pressKey('8')">8</button>
+                    <button class="calc-btn" onclick="pressKey('9')">9</button>
+                    <button class="calc-btn op-btn" onclick="pressKey('*')">&times;</button>
+
+                    <!-- Row 3 keys -->
+                    <button class="calc-btn" onclick="pressKey('4')">4</button>
+                    <button class="calc-btn" onclick="pressKey('5')">5</button>
+                    <button class="calc-btn" onclick="pressKey('6')">6</button>
+                    <button class="calc-btn op-btn" onclick="pressKey('-')">-</button>
+
+                    <!-- Row 4 keys -->
+                    <button class="calc-btn" onclick="pressKey('1')">1</button>
+                    <button class="calc-btn" onclick="pressKey('2')">2</button>
+                    <button class="calc-btn" onclick="pressKey('3')">3</button>
+                    <button class="calc-btn op-btn" onclick="pressKey('+')">+</button>
+
+                    <!-- Row 5 keys -->
+                    <button class="calc-btn" onclick="pressKey('0')">0</button>
+                    <button class="calc-btn" onclick="pressKey('.')">.</button>
+                    <button class="calc-btn eq-btn" onclick="pressKey('=')">=</button>
+
+                </div>
+            </section>
+
+            <!-- Column 3: Math Calculation History sidebar -->
+            <aside class="hud-history">
+                <span class="hud-lbl"><i class="fa-solid fa-clock-rotate-left"></i> CALCULATION LOGS</span>
+                
+                <div class="history-list" id="history-list-box">
+                    <div class="hist-empty" id="hist-empty-item">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>No computations executed yet. Run calculations to generate logs.</span>
+                    </div>
+                </div>
+
+                <button class="btn-clear-history" onclick="clearHistoryLogs()">CLEAR LOGS</button>
+            </aside>
+
+        </main>
+
+        <!-- Footer parameters control theme and active voice metrics -->
+        <footer class="console-footer">
+            <button onclick="toggleTheme()" class="theme-toggle-btn">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+                <span>SWITCH THEME</span>
+            </button>
+            
+            <div class="sys-logs" id="sys-vocal-telemetry">
+                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i> Voice Synthesis Engine Online
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Core Calculator Operations and Vocal JavaScript Systems -->
+    <script>
+        // --- Calculator Internal State ---
+        const CalculatorState = {
+            currentValue: '0',
+            formula: '',
+            isFinished: false,
+            theme: 'dark',
+            pitch: 1.0,
+            speed: 1.0,
+            selectedVoice: 'default',
+            isListening: false,
+            history: []
+        };
+
+        // --- View Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initVoiceSynthesizer();
+            initSpeechRecognition();
+            registerKeyboardBindings();
+        });
+
+        // --- Low-latency audio tick synthesizers ---
+        function playSynthesizerTick(type = 'click') {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                if (type === 'click') {
+                    // Tactile mechanical key tick sound
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(650, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(350, ctx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.03, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.05);
+                } else if (type === 'equal') {
+                    // Modern double-chirp computation confirmation tone
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.12);
+                } else if (type === 'error') {
+                    // Warning soft buzzer error sound
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.2);
+                }
+            } catch(e) {
+                console.log("Synthesizer tick blocked by browser autoplay settings.", e);
+            }
+        }
+
+        // --- Physical Calculator Input Processing Router ---
+        function pressKey(key) {
+            playSynthesizerTick(key === '=' ? 'equal' : 'click');
+            
+            const screen = document.getElementById('screen-text');
+            const formulaBar = document.getElementById('lbl-formula');
+
+            if (CalculatorState.isFinished && !isNaN(key)) {
+                // If computation just completed and user taps number, start fresh
+                CalculatorState.currentValue = '';
+                CalculatorState.isFinished = false;
+            }
+
+            switch(key) {
+                case 'C':
+                    CalculatorState.currentValue = '0';
+                    CalculatorState.formula = '';
+                    CalculatorState.isFinished = false;
+                    break;
+                    
+                case 'DEL':
+                    if (CalculatorState.currentValue.length > 1) {
+                        CalculatorState.currentValue = CalculatorState.currentValue.slice(0, -1);
+                    } else {
+                        CalculatorState.currentValue = '0';
+                    }
+                    break;
+
+                case '.':
+                    const lastToken = getLastToken(CalculatorState.currentValue);
+                    if (!lastToken.includes('.')) {
+                        CalculatorState.currentValue += '.';
+                    }
+                    break;
+
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                    CalculatorState.isFinished = false;
+                    const char = CalculatorState.currentValue.slice(-1);
+                    if (['+', '-', '*', '/', '%'].includes(char)) {
+                        // Replace operator if tapped back to back
+                        CalculatorState.currentValue = CalculatorState.currentValue.slice(0, -1) + key;
+                    } else {
+                        CalculatorState.currentValue += key;
+                    }
+                    break;
+
+                case '=':
+                    executeCalculation();
+                    break;
+
+                default:
+                    // Numeric parameters input
+                    if (CalculatorState.currentValue === '0') {
+                        CalculatorState.currentValue = key;
+                    } else {
+                        CalculatorState.currentValue += key;
+                    }
+                    break;
+            }
+
+            // Sync visual UI elements
+            updateLCDDisplay();
+        }
+
+        function getLastToken(expr) {
+            const tokens = expr.split(/[\+\-\*\/\%]/);
+            return tokens[tokens.length - 1];
+        }
+
+        function updateLCDDisplay() {
+            const screen = document.getElementById('screen-text');
+            const formulaBar = document.getElementById('lbl-formula');
+
+            // Beautify math display characters
+            let displayFormula = CalculatorState.formula
+                .replace(/\*/g, ' &times; ')
+                .replace(/\//g, ' &divide; ')
+                .replace(/\+/g, ' + ')
+                .replace(/\-/g, ' - ');
+
+            let displayVal = CalculatorState.currentValue
+                .replace(/\*/g, ' &times; ')
+                .replace(/\//g, ' &divide; ')
+                .replace(/\+/g, ' + ')
+                .replace(/\-/g, ' - ');
+
+            formulaBar.innerHTML = displayFormula;
+            screen.innerHTML = displayVal || '0';
+        }
+
+        // --- Math Engine Calculator Logic ---
+        function executeCalculation() {
+            if (!CalculatorState.currentValue) return;
+
+            let sanitizedExpr = CalculatorState.currentValue;
+            
+            // Clean up trailing operators if present
+            const lastChar = sanitizedExpr.slice(-1);
+            if (['+', '-', '*', '/', '%'].includes(lastChar)) {
+                sanitizedExpr = sanitizedExpr.slice(0, -1);
+            }
+
+            try {
+                // Precision mathematical evaluator using Function constructor
+                let result = evaluateArithmetic(sanitizedExpr);
+                
+                if (result === Infinity || result === -Infinity || isNaN(result)) {
+                    throw new Error("Division by zero");
+                }
+
+                // Precision calibration: round decimals gracefully to 8 digits max
+                if (result.toString().includes('.') && result.toString().split('.')[1].length > 8) {
+                    result = parseFloat(result.toFixed(8));
+                }
+
+                CalculatorState.formula = `${sanitizedExpr} =`;
+                
+                // Trigger Voice Synthesis of results automatically
+                triggerVoiceOutput(sanitizedExpr, result);
+
+                // Add computation parameters to History registers
+                addHistoryRecord(sanitizedExpr, result);
+
+                CalculatorState.currentValue = result.toString();
+                CalculatorState.isFinished = true;
+                
+            } catch (err) {
+                playSynthesizerTick('error');
+                CalculatorState.formula = sanitizedExpr;
+                CalculatorState.currentValue = 'Error';
+                CalculatorState.isFinished = true;
+                triggerVoiceOutputError(err.message === "Division by zero" ? "Division by zero error" : "Calculation Error");
+            }
+        }
+
+        function evaluateArithmetic(expr) {
+            // Clean up expr format variables to standard JS evaluators
+            const computedVal = new Function(`return (${expr})`)();
+            return computedVal;
+        }
+
+        // --- Native Keyboard Math Bindings ---
+        function registerKeyboardBindings() {
+            document.addEventListener('keydown', (event) => {
+                const key = event.key;
+                if (!isNaN(key)) {
+                    pressKey(key);
+                } else if (key === '+') {
+                    pressKey('+');
+                } else if (key === '-') {
+                    pressKey('-');
+                } else if (key === '*') {
+                    pressKey('*');
+                } else if (key === '/') {
+                    pressKey('/');
+                } else if (key === '%') {
+                    pressKey('%');
+                } else if (key === '.') {
+                    pressKey('.');
+                } else if (key === 'Enter' || key === '=') {
+                    event.preventDefault();
+                    pressKey('=');
+                } else if (key === 'Backspace') {
+                    pressKey('DEL');
+                } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                    pressKey('C');
+                }
+            });
+        }
+
+        // --- System Speech Synthesis Result Speakers (TTS) ---
+        const synth = window.speechSynthesis;
+
+        function initVoiceSynthesizer() {
+            if (!synth) {
+                document.getElementById('sys-vocal-telemetry').innerHTML = `<i class="fa-solid fa-exclamation-triangle" style="color: var(--primary);"></i> Speech synthesis unsupported`;
+                return;
+            }
+
+            // Wait for voices to load from system
+            setTimeout(() => {
+                const voices = synth.getVoices();
+                const dropdown = document.getElementById('sel-voice-accent');
+                if (!dropdown) return;
+
+                voices.forEach(voice => {
+                    const opt = document.createElement('option');
+                    opt.value = voice.name;
+                    opt.innerText = `${voice.name} (${voice.lang})`;
+                    dropdown.appendChild(opt);
+                });
+            }, 600);
+        }
+
+        function changeVoiceAccent(voiceName) {
+            CalculatorState.selectedVoice = voiceName;
+            
+            // Speak test confirmation
+            const utterance = new SpeechSynthesisUtterance("Accent voice profile loaded");
+            configureUtteranceParams(utterance);
+            synth.speak(utterance);
+        }
+
+        function updatePitchValue(val) {
+            CalculatorState.pitch = parseFloat(val);
+            document.getElementById('pitch-val').innerText = val;
+        }
+
+        function updateSpeedValue(val) {
+            CalculatorState.speed = parseFloat(val);
+            document.getElementById('speed-val').innerText = val;
+        }
+
+        function configureUtteranceParams(utterance) {
+            utterance.pitch = CalculatorState.pitch;
+            utterance.rate = CalculatorState.speed;
+
+            if (CalculatorState.selectedVoice !== 'default') {
+                const voices = synth.getVoices();
+                const matchedVoice = voices.find(v => v.name === CalculatorState.selectedVoice);
+                if (matchedVoice) utterance.voice = matchedVoice;
+            }
+        }
+
+        function triggerVoiceOutput(expression, result) {
+            if (!synth) return;
+            if (synth.speaking) synth.cancel();
+
+            // Beautify math formulas into human spoken language
+            const spokenExpr = expression
+                .replace(/\+/g, ' plus ')
+                .replace(/\-/g, ' minus ')
+                .replace(/\*/g, ' multiplied by ')
+                .replace(/\//g, ' divided by ')
+                .replace(/\%/g, ' percent of ');
+
+            const textToSpeak = `The result of ${spokenExpr} is ${result}`;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            configureUtteranceParams(utterance);
+            
+            synth.speak(utterance);
+        }
+
+        function triggerVoiceOutputError(errorText) {
+            if (!synth) return;
+            if (synth.speaking) synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(errorText);
+            configureUtteranceParams(utterance);
+            synth.speak(utterance);
+        }
+
+        // --- Math Computation History logs tracker ---
+        function addHistoryRecord(expr, res) {
+            const listContainer = document.getElementById('history-list-box');
+            const emptyHint = document.getElementById('hist-empty-item');
+            
+            if (emptyHint) emptyHint.remove();
+
+            // Store inside internal State list
+            CalculatorState.history.unshift({ expression: expr, result: res });
+
+            // Create highly animated tactile card
+            const itemHTML = `
+                <div class="history-item" onclick="loadHistoryItem('${res}')">
+                    <span class="hist-expr">${expr} =</span>
+                    <span class="hist-res">${res}</span>
+                </div>
+            `;
+            listContainer.insertAdjacentHTML('afterbegin', itemHTML);
+        }
+
+        function loadHistoryItem(resultVal) {
+            playSynthesizerTick('click');
+            CalculatorState.currentValue = resultVal;
+            CalculatorState.isFinished = false;
+            updateLCDDisplay();
+        }
+
+        function clearHistoryLogs() {
+            playSynthesizerTick('click');
+            CalculatorState.history = [];
+            const listContainer = document.getElementById('history-list-box');
+            listContainer.innerHTML = `
+                <div class="hist-empty" id="hist-empty-item">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>No computations executed yet. Run calculations to generate logs.</span>
+                </div>
+            `;
+        }
+
+        // --- Continuous Microphone Voice Input Systems (Speech Recognition) ---
+        let recognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        function initSpeechRecognition() {
+            if (!SpeechRecognition) {
+                const desc = document.getElementById('mic-status-desc');
+                if (desc) desc.innerText = "Speech input unsupported in this browser";
+                document.getElementById('mic-trigger-btn').setAttribute('disabled', 'true');
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false; // Trigger once per speak session
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                CalculatorState.isListening = true;
+                document.getElementById('mic-trigger-btn').classList.add('listening');
+                document.getElementById('mic-status-desc').innerHTML = `<span style="color: var(--primary); font-weight:700;"><i class="fa-solid fa-wave-square animate-pulse"></i> Listening now...</span>`;
+            };
+
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript.trim().toLowerCase();
+                console.log("Spoken Math heard: ", text);
+                
+                document.getElementById('mic-status-desc').innerHTML = `Heard: "${text}"`;
+                parseSpokenMathCommand(text);
+            };
+
+            recognition.onerror = (err) => {
+                console.error("Mic error: ", err);
+                document.getElementById('mic-status-desc').innerText = "Speak again. Voice unrecognized.";
+            };
+
+            recognition.onend = () => {
+                CalculatorState.isListening = false;
+                document.getElementById('mic-trigger-btn').classList.remove('listening');
+                setTimeout(() => {
+                    if (!CalculatorState.isListening) {
+                        document.getElementById('mic-status-desc').innerText = 'Tap mic to speak equations (e.g. "5 plus 15")';
+                    }
+                }, 3000);
+            };
+        }
+
+        function toggleMicrophoneInput() {
+            if (!recognition) return;
+            playSynthesizerTick('click');
+
+            if (CalculatorState.isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch(e) { console.log(e); }
+            }
+        }
+
+        function parseSpokenMathCommand(cmd) {
+            // Clean vocal words to standard operators
+            let normalized = cmd
+                .replace(/plus/g, '+')
+                .replace(/minus/g, '-')
+                .replace(/subtract/g, '-')
+                .replace(/multiplied by/g, '*')
+                .replace(/multiply/g, '*')
+                .replace(/into/g, '*')
+                .replace(/times/g, '*')
+                .replace(/divided by/g, '/')
+                .replace(/divide/g, '/')
+                .replace(/percent/g, '%')
+                .replace(/equals/g, '=')
+                .replace(/equal/g, '=')
+                .replace(/\s+/g, ''); // remove all white spaces
+
+            console.log("Parsed Math expression: ", normalized);
+
+            // If expression ends with =, execute directly
+            if (normalized.endsWith('=')) {
+                normalized = normalized.slice(0, -1);
+                CalculatorState.currentValue = normalized;
+                executeCalculation();
+            } else {
+                // Evaluate or load into displays
+                CalculatorState.currentValue = normalized;
+                executeCalculation();
+            }
+
+            updateLCDDisplay();
+        }
+
+        // --- Visual Aesthetic Environmental Themes ---
+        function toggleTheme() {
+            playSynthesizerTick('click');
+            if (CalculatorState.theme === 'dark') {
+                document.body.setAttribute('data-theme', 'light');
+                CalculatorState.theme = 'light';
+            } else {
+                document.body.removeAttribute('data-theme');
+                CalculatorState.theme = 'dark';
+            }
+        }
+    </script>
+</body>
+</html>
