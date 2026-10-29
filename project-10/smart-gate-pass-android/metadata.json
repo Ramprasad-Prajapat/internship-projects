@@ -1,0 +1,6 @@
+{
+  "name": "Smart Gate Pass",
+  "description": "Smart Gate Pass Management System for guards, residents, and admins.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
