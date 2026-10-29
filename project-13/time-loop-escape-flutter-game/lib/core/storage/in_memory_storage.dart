@@ -1,0 +1,40 @@
+// lib/core/storage/in_memory_storage.dart
+import 'local_storage.dart';
+
+/// In-memory storage implementation for environment runtime fallback / baseline testing.
+class InMemoryLocalStorage implements LocalStorageService {
+  final Map<String, dynamic> _store = {};
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Future<String?> getString(String key) async {
+    return _store[key] as String?;
+  }
+
+  @override
+  Future<void> setString(String key, String value) async {
+    _store[key] = value;
+  }
+
+  @override
+  Future<bool?> getBool(String key) async {
+    return _store[key] as bool?;
+  }
+
+  @override
+  Future<void> setBool(String key, bool value) async {
+    _store[key] = value;
+  }
+
+  @override
+  Future<void> remove(String key) async {
+    _store.remove(key);
+  }
+
+  @override
+  Future<void> clearAll() async {
+    _store.clear();
+  }
+}

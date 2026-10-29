@@ -1,0 +1,107 @@
+name: Android Release Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-release-apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: "3.22.2"
+
+      - name: Cache Flutter pub packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Accept Android SDK Licenses
+        run: yes | flutter doctor --android-licenses || true
+
+      - name: Run flutter doctor
+        run: flutter doctor -v
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run analyzer
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build release APK
+        run: |
+          chmod +x android/gradlew
+          flutter build apk --release || (cd android && ./gradlew assembleRelease --stacktrace)
+
+      - name: Locate APK
+        id: locate_apk
+        run: |
+          APK_PATH=$(find ${{ github.workspace }}/build/app/outputs/flutter-apk -name "app-release.apk" -print -quit)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find ${{ github.workspace }}/build/app/outputs/flutter-apk -name "*.apk" -print -quit)
+          fi
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
+          APK_SIZE=$(stat -c%s "$APK_PATH")
+          echo "APK_SIZE=$APK_SIZE" >> $GITHUB_OUTPUT
+          SHA256=$(sha256sum "$APK_PATH" | awk '{print $1}')
+          echo "SHA256=$SHA256" >> $GITHUB_OUTPUT
+
+      - name: Create metadata file
+        run: |
+          cat <<EOF > build_metadata.txt
+          APP_NAME: ${GITHUB_REPOSITORY##*/}
+          VERSION: $(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION_CODE: $(grep '^version:' pubspec.yaml | awk -F'+' '{print $2}')
+          FLUTTER_VERSION: $(flutter --version | head -n1)
+          JAVA_VERSION: $(java -version 2>&1 | head -n1)
+          GIT_COMMIT: ${{ github.sha }}
+          BUILD_TIMESTAMP: $(date -u)
+          APK_FILENAME: $(basename ${{ steps.locate_apk.outputs.APK_PATH }})
+          APK_SIZE: ${{ steps.locate_apk.outputs.APK_SIZE }}
+          SHA256: ${{ steps.locate_apk.outputs.SHA256 }}
+          EOF
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: time-loop-escape-release-apk
+          path: ${{ steps.locate_apk.outputs.APK_PATH }}
+
+      - name: Upload metadata artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-metadata
+          path: build_metadata.txt

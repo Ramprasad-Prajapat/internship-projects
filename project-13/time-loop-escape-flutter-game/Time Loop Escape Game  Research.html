@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Time Loop Escape Game - Complete In-Depth Research Report" />
+  <title>Time Loop Escape - Complete Research Report</title>
+  <style>
+    :root{
+      --bg:#090d18;
+      --panel:#111827;
+      --panel-2:#172033;
+      --text:#eef2ff;
+      --muted:#a9b4cc;
+      --line:rgba(255,255,255,.10);
+      --accent:#8b5cf6;
+      --accent-2:#22d3ee;
+      --accent-3:#f59e0b;
+      --good:#34d399;
+      --danger:#fb7185;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:20px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(139,92,246,.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(34,211,238,.10), transparent 28%),
+        linear-gradient(180deg,#080b14 0%,#0b1020 45%,#090d18 100%);
+      line-height:1.7;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%}
+    button{font:inherit}
+
+    .shell{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100vh}
+
+    aside{
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+      padding:28px 22px;
+      border-right:1px solid var(--line);
+      background:rgba(6,10,20,.82);
+      backdrop-filter:blur(18px);
+    }
+
+    .brand{
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(34,211,238,.08));
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+
+    .brand .eyebrow{
+      font-size:.78rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--accent-2);
+      font-weight:800;
+    }
+
+    .brand h1{
+      font-size:1.35rem;
+      margin:.3rem 0 .4rem;
+      line-height:1.2;
+    }
+
+    .brand p{margin:0;color:var(--muted);font-size:.92rem}
+
+    nav{display:grid;gap:7px}
+    nav a{
+      padding:10px 12px;
+      border-radius:12px;
+      color:#c8d1e6;
+      font-size:.92rem;
+      transition:.2s ease;
+    }
+    nav a:hover{
+      background:rgba(139,92,246,.13);
+      color:#fff;
+      transform:translateX(3px);
+    }
+
+    main{min-width:0}
+    .hero{
+      min-height:86vh;
+      display:flex;
+      align-items:center;
+      padding:72px 42px 42px;
+      border-bottom:1px solid var(--line);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::after{
+      content:"11:57";
+      position:absolute;
+      right:-10px;
+      bottom:-65px;
+      font-weight:900;
+      font-size:clamp(7rem,18vw,16rem);
+      color:rgba(255,255,255,.025);
+      letter-spacing:-.08em;
+      pointer-events:none;
+    }
+
+    .hero-inner{max-width:var(--max);margin:auto;width:100%;position:relative;z-index:1}
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 12px;
+      border:1px solid rgba(139,92,246,.35);
+      border-radius:999px;
+      background:rgba(139,92,246,.10);
+      color:#d5d3dd;
+      font-weight:700;
+      font-size:.84rem;
+    }
+
+    h1.hero-title{
+      font-size:clamp(3rem,7vw,6.5rem);
+      line-height:.96;
+      margin:24px 0 20px;
+      letter-spacing:-.055em;
+      max-width:900px;
+    }
+
+    .gradient{
+      background:linear-gradient(90deg,#c4b5fd,#67e8f9,#fcd34d);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero p{
+      max-width:780px;
+      color:var(--muted);
+      font-size:clamp(1.05rem,2vw,1.3rem);
+      margin:0 0 28px;
+    }
+
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px 18px;
+      border-radius:13px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#0b1020;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.04);
+      color:#fff;
+    }
+
+    .content{padding:48px 42px 90px}
+    .content-inner{max-width:var(--max);margin:auto}
+
+    section{
+      scroll-margin-top:20px;
+      margin:0 0 34px;
+      padding:30px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.018));
+      border-radius:var(--radius);
+      box-shadow:0 12px 40px rgba(0,0,0,.18);
+    }
+
+    section h2{
+      font-size:clamp(1.7rem,3vw,2.35rem);
+      margin:0 0 14px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    section h3{
+      margin:24px 0 8px;
+      font-size:1.18rem;
+      color:#fff;
+    }
+
+    p{color:#d7deed}
+    .lead{font-size:1.08rem;color:#dce4f7}
+
+    .grid{display:grid;gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+    .card{
+      border:1px solid var(--line);
+      background:rgba(9,14,28,.68);
+      border-radius:16px;
+      padding:18px;
+    }
+    .card strong{display:block;margin-bottom:4px}
+    .muted{color:var(--muted)}
+    .accent{color:#c4b5fd}
+    .cyan{color:#67e8f9}
+    .gold{color:#fcd34d}
+
+    .quote{
+      border-left:4px solid var(--accent);
+      background:rgba(139,92,246,.08);
+      padding:17px 18px;
+      border-radius:0 14px 14px 0;
+      font-size:1.08rem;
+      color:#ede9fe;
+      margin:18px 0;
+    }
+
+    .table-wrap{overflow:auto;border-radius:15px;border:1px solid var(--line);margin-top:16px}
+    table{width:100%;border-collapse:collapse;min-width:680px;background:rgba(4,8,17,.55)}
+    th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+    th{
+      background:rgba(139,92,246,.10);
+      color:#e9e5ff;
+      font-size:.85rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    tr:last-child td{border-bottom:none}
+
+    ul,ol{padding-left:1.25rem}
+    li{margin:.4rem 0;color:#d7deed}
+
+    code,pre{
+      font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    }
+    pre{
+      white-space:pre-wrap;
+      background:#050913;
+      padding:18px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      color:#c7f9ff;
+      overflow:auto;
+    }
+
+    .kpi{
+      font-size:2rem;
+      font-weight:900;
+      letter-spacing:-.04em;
+      color:#fff;
+    }
+
+    .chapter{
+      border-left:3px solid var(--accent-2);
+      padding-left:16px;
+      margin:16px 0;
+    }
+
+    footer{
+      max-width:var(--max);
+      margin:auto;
+      padding:10px 42px 50px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .mobile-top{
+      display:none;
+      position:sticky;
+      top:0;
+      z-index:20;
+      padding:12px 16px;
+      background:rgba(6,10,20,.9);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+    }
+
+    .mobile-top button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      border-radius:10px;
+      padding:9px 12px;
+    }
+
+    @media(max-width:980px){
+      .shell{display:block}
+      aside{
+        position:fixed;
+        left:-320px;
+        top:0;
+        z-index:30;
+        width:290px;
+        transition:.25s ease;
+        box-shadow:20px 0 60px rgba(0,0,0,.5);
+      }
+      aside.open{left:0}
+      .mobile-top{display:flex;justify-content:space-between;align-items:center}
+      .hero{min-height:auto;padding:72px 22px 52px}
+      .content{padding:30px 18px 70px}
+      footer{padding:10px 18px 40px}
+    }
+
+    @media(max-width:720px){
+      .grid.two,.grid.three{grid-template-columns:1fr}
+      section{padding:22px}
+      h1.hero-title{font-size:3.2rem}
+    }
+
+    @media print{
+      aside,.mobile-top,.hero-actions{display:none!important}
+      .shell{display:block}
+      body{background:#fff;color:#111}
+      .hero,.content{padding:20px}
+      section{box-shadow:none;break-inside:avoid;background:#fff;border:1px solid #ddd}
+      p,li,.muted{color:#333}
+      h1,h2,h3,strong{color:#111}
+      table{background:#fff}
+      th{background:#eee;color:#111}
+      td,th{border-color:#ddd}
+      .quote{color:#111;background:#f5f3ff}
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-top">
+    <strong>Time Loop Escape Research</strong>
+    <button onclick="document.querySelector('aside').classList.toggle('open')">Menu</button>
+  </div>
+
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="eyebrow">Game Research</div>
+        <h1>Time Loop Escape</h1>
+        <p>Complete mobile game concept, design, market, monetisation and development research.</p>
+      </div>
+      <nav>
+        <a href="#executive">1. Executive Conclusion</a>
+        <a href="#naming">2. Naming Discovery</a>
+        <a href="#market">3. Market Opportunity</a>
+        <a href="#competitors">4. Competitor Research</a>
+        <a href="#concept">5. Original Game Concept</a>
+        <a href="#pillars">6. Design Pillars</a>
+        <a href="#gameplay">7. Core Gameplay Loop</a>
+        <a href="#rules">8. Time-Loop Rules</a>
+        <a href="#knowledge">9. Knowledge Board</a>
+        <a href="#npc">10. NPC Routine System</a>
+        <a href="#puzzles">11. Puzzle Categories</a>
+        <a href="#fairness">12. Puzzle Fairness</a>
+        <a href="#hints">13. Hint System</a>
+        <a href="#ui">14. UI and Controls</a>
+        <a href="#visual">15. Visual Direction</a>
+        <a href="#audio">16. Audio Design</a>
+        <a href="#story">17. Story Structure</a>
+        <a href="#endings">18. Endings</a>
+        <a href="#monetisation">19. Monetisation</a>
+        <a href="#technical">20. Technical Plan</a>
+        <a href="#backend">21. Backend</a>
+        <a href="#performance">22. Performance</a>
+        <a href="#mvp">23. MVP Scope</a>
+        <a href="#roadmap">24. Roadmap</a>
+        <a href="#budget">25. Budget</a>
+        <a href="#team">26. Team</a>
+        <a href="#risks">27. Risks</a>
+        <a href="#metrics">28. Success Metrics</a>
+        <a href="#recommendation">29. Final Recommendation</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <div class="hero-inner">
+          <span class="pill">Complete In-Depth Research Report</span>
+          <h1 class="hero-title">Time Loop <span class="gradient">Escape Game</span></h1>
+          <p>A complete research blueprint for creating a cinematic mobile mystery game where the world resets, but the player’s knowledge survives.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#executive">Start Reading</a>
+            <button class="btn secondary" onclick="window.print()">Print / Save PDF</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="content-inner">
+
+          <section id="executive">
+            <h2>1. Executive Research Conclusion</h2>
+            <p class="lead"><strong>Time-loop mystery + escape-room puzzle</strong> is a strong mobile-game concept when the game uses a compact location, short sessions and knowledge-based progression.</p>
+            <div class="quote">Recommended direction: a single-player, offline, narrative puzzle game where the player repeatedly experiences the same five minutes inside a mysterious heritage hotel. The physical world resets, but discovered information, clues and dialogue knowledge remain.</div>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Element</th><th>Recommendation</th></tr>
+                <tr><td>Platform</td><td>Android first, iOS later</td></tr>
+                <tr><td>Genre</td><td>Mystery, escape room, time loop, puzzle adventure</td></tr>
+                <tr><td>Camera</td><td>Fixed-camera 2.5D or first-person room navigation</td></tr>
+                <tr><td>Loop duration</td><td>4–6 minutes</td></tr>
+                <tr><td>Chapter duration</td><td>25–40 minutes</td></tr>
+                <tr><td>Full game duration</td><td>3–5 hours</td></tr>
+                <tr><td>Core progression</td><td>Knowledge, clues and dialogue unlocks</td></tr>
+                <tr><td>Business model</td><td>Free first chapter + paid full-game unlock</td></tr>
+                <tr><td>Multiplayer</td><td>Not required</td></tr>
+                <tr><td>Internet</td><td>Not required for gameplay</td></tr>
+                <tr><td>Engine</td><td>Unity 6 with C#</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section id="naming">
+            <h2>2. Important Naming Discovery</h2>
+            <p><strong>“Time Loop Escape” should be treated as a temporary project title rather than the final commercial name.</strong> Similar names are already used by multiple games, which can create discoverability, branding and trademark problems.</p>
+            <h3>Recommended working-name options</h3>
+            <div class="grid three">
+              <div class="card"><strong>11:57 — The Last Check-In</strong><span class="muted">Best overall direction</span></div>
+              <div class="card"><strong>Loop 47</strong><span class="muted">Minimal and mysterious</span></div>
+              <div class="card"><strong>The Fifth Reset</strong><span class="muted">Story-driven feeling</span></div>
+              <div class="card"><strong>Before Midnight</strong><span class="muted">Clear countdown theme</span></div>
+              <div class="card"><strong>Hotel Kalchakra</strong><span class="muted">Indian cultural identity</span></div>
+              <div class="card"><strong>Room 11 Never Ends</strong><span class="muted">Strong horror-mystery tone</span></div>
+            </div>
+            <div class="quote"><strong>Best branding direction:</strong> 11:57 — The Last Check-In</div>
+          </section>
+
+          <section id="market">
+            <h2>3. Market Opportunity</h2>
+            <p>India is a highly mobile-first gaming market. Mystery, emotional narrative, atmospheric locations and accessible controls can attract a broad audience beyond traditional hardcore players.</p>
+            <div class="grid two">
+              <div class="card">
+                <strong>Primary audience</strong>
+                <ul>
+                  <li>Age 16–35</li>
+                  <li>Mystery and thriller fans</li>
+                  <li>Escape-room players</li>
+                  <li>Story-driven mobile gamers</li>
+                  <li>Players who enjoy solving instead of fighting</li>
+                </ul>
+              </div>
+              <div class="card">
+                <strong>Secondary audience</strong>
+                <ul>
+                  <li>YouTube walkthrough viewers</li>
+                  <li>Horror-mystery audiences</li>
+                  <li>Streamers and theory communities</li>
+                  <li>Friends who solve puzzles together</li>
+                  <li>Fans of Rusty Lake and The Room</li>
+                </ul>
+              </div>
+            </div>
+            <div class="quote">Market positioning: “A cinematic mobile mystery where every failed loop reveals a new piece of the truth.”</div>
+          </section>
+
+          <section id="competitors">
+            <h2>4. Competitor and Inspiration Research</h2>
+            <div class="grid two">
+              <div class="card"><strong>Minit</strong><p>Shows how very short loops can create urgency. Every loop must provide meaningful progress and should not force long repeated travel.</p></div>
+              <div class="card"><strong>12 Minutes</strong><p>Uses knowledge as the main resource. The player changes actions and conversations by remembering previous cycles.</p></div>
+              <div class="card"><strong>Outer Wilds</strong><p>Demonstrates powerful knowledge-based progression and timing-dependent locations. Its open-world scale should not be copied for mobile MVP.</p></div>
+              <div class="card"><strong>The Room</strong><p>Shows the strength of tactile mobile interactions such as drag, rotate, slide and mechanical manipulation.</p></div>
+              <div class="card"><strong>Cube Escape / Rusty Lake</strong><p>Proves that a small location can feel deep when symbols, memories, objects and narrative are interconnected.</p></div>
+              <div class="card"><strong>The Past Within</strong><p>Highlights the importance of external puzzle testing because players interpret clues differently from developers.</p></div>
+            </div>
+          </section>
+
+          <section id="concept">
+            <h2>5. Recommended Original Game Concept</h2>
+            <h3>Working title: 11:57 — The Last Check-In</h3>
+            <p>The player enters an abandoned Rajasthan-inspired heritage hotel while searching for a missing sibling. All hotel clocks are frozen at 11:57 PM. At midnight, the hotel collapses into a temporal reset and the player returns to the lobby.</p>
+            <p>Every loop restores rooms, NPC positions and puzzle states. However, the protagonist remembers what happened and permanently records discoveries.</p>
+            <h3>Setting</h3>
+            <ul>
+              <li>Central courtyard</li>
+              <li>Old mechanical elevator</li>
+              <li>Locked royal suites</li>
+              <li>Clock tower</li>
+              <li>Underground service tunnel</li>
+              <li>Abandoned ballroom</li>
+              <li>Archive room</li>
+              <li>Temple chamber</li>
+              <li>Hidden modern research laboratory</li>
+            </ul>
+            <h3>Story premise</h3>
+            <p>Twenty years ago, an unexplained hotel incident was officially described as an electrical fire. No bodies were found. The guest register includes names from future dates, and the missing sibling had been investigating the property before disappearing.</p>
+          </section>
+
+          <section id="pillars">
+            <h2>6. Core Design Pillars</h2>
+            <div class="grid three">
+              <div class="card"><strong>Observe</strong><p>Study NPC movement, sound cues, object changes and timed events.</p></div>
+              <div class="card"><strong>Experiment</strong><p>Try new actions, routes, dialogue options and item combinations.</p></div>
+              <div class="card"><strong>Remember</strong><p>Store important discoveries in the Knowledge Board.</p></div>
+              <div class="card"><strong>Optimise</strong><p>Create faster routes and more efficient action sequences.</p></div>
+              <div class="card"><strong>Change Outcome</strong><p>Alter the event instead of merely finding an exit.</p></div>
+            </div>
+          </section>
+
+          <section id="gameplay">
+            <h2>7. Core Gameplay Loop</h2>
+            <ol>
+              <li>Player wakes in the lobby.</li>
+              <li>The Knowledge Board recommends a lead.</li>
+              <li>Player chooses a location or character.</li>
+              <li>Timed environment events begin.</li>
+              <li>Player discovers a clue, solves a puzzle or influences an NPC.</li>
+              <li>New knowledge, a code or dialogue topic unlocks.</li>
+              <li>Midnight triggers the reset.</li>
+              <li>The player returns with permanent knowledge.</li>
+              <li>The next loop begins with better options.</li>
+            </ol>
+            <h3>Example progression</h3>
+            <div class="chapter"><strong>Loop 1:</strong> Player discovers a locked elevator with no power.</div>
+            <div class="chapter"><strong>Loop 2:</strong> Player locates the maintenance room, but the key is missing.</div>
+            <div class="chapter"><strong>Loop 3:</strong> Player notices the caretaker leaves the key at reception.</div>
+            <div class="chapter"><strong>Loop 4:</strong> Player restores the generator.</div>
+            <div class="chapter"><strong>Loop 5:</strong> Elevator works, but there is not enough time.</div>
+            <div class="chapter"><strong>Loop 6:</strong> Player performs the known sequence faster and reaches the basement.</div>
+          </section>
+
+          <section id="rules">
+            <h2>8. Time-Loop Rules</h2>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Element</th><th>Resets?</th><th>Persists?</th></tr>
+                <tr><td>Player location</td><td>Yes</td><td>No</td></tr>
+                <tr><td>Open doors</td><td>Yes</td><td>No</td></tr>
+                <tr><td>Puzzle mechanisms</td><td>Yes</td><td>No</td></tr>
+                <tr><td>NPC positions</td><td>Yes</td><td>No</td></tr>
+                <tr><td>Regular inventory</td><td>Yes</td><td>No</td></tr>
+                <tr><td>Discovered codes</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Map information</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Dialogue topics</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Achievements</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Anchored item</td><td>No</td><td>Yes, one item only</td></tr>
+              </table>
+            </div>
+            <h3>Timeline Anchor</h3>
+            <p>Mid-game, the player discovers a device that can preserve one physical object through the reset. This creates meaningful strategy without requiring a large inventory system.</p>
+          </section>
+
+          <section id="knowledge">
+            <h2>9. Knowledge Board System</h2>
+            <p>The Knowledge Board is the primary progression interface. It should include:</p>
+            <ul>
+              <li>Character profiles</li>
+              <li>Timeline of events</li>
+              <li>Discovered locations</li>
+              <li>Codes and symbols</li>
+              <li>Unanswered questions</li>
+              <li>Confirmed facts</li>
+              <li>Contradictions</li>
+              <li>Available leads</li>
+              <li>Possible final theories</li>
+            </ul>
+            <div class="quote">The Knowledge Board must organise information without directly revealing puzzle solutions.</div>
+          </section>
+
+          <section id="npc">
+            <h2>10. NPC Routine System</h2>
+            <p>Every important NPC follows a precise five-minute schedule that the player can observe and later manipulate.</p>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Time</th><th>Caretaker Action</th></tr>
+                <tr><td>11:57:00</td><td>Cleans reception</td></tr>
+                <tr><td>11:57:40</td><td>Receives a mysterious phone call</td></tr>
+                <tr><td>11:58:05</td><td>Places the maintenance key on the desk</td></tr>
+                <tr><td>11:58:30</td><td>Walks toward the generator room</td></tr>
+                <tr><td>11:59:10</td><td>Sees something in the corridor</td></tr>
+                <tr><td>11:59:30</td><td>Locks the ballroom</td></tr>
+                <tr><td>12:00:00</td><td>Disappears during reset</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section id="puzzles">
+            <h2>11. Puzzle Categories</h2>
+            <div class="grid two">
+              <div class="card"><strong>Observation puzzles</strong><p>Changing paintings, shadow codes, silent gestures and bell patterns.</p></div>
+              <div class="card"><strong>Timing puzzles</strong><p>Actions must happen in a precise order before the reset.</p></div>
+              <div class="card"><strong>Physical manipulation</strong><p>Rotate gears, tune radios, slide locks, assemble photos and connect wires.</p></div>
+              <div class="card"><strong>Dialogue puzzles</strong><p>Knowledge from previous loops unlocks statements that alter NPC behaviour.</p></div>
+              <div class="card"><strong>Cross-loop puzzles</strong><p>Information seen in one loop is applied earlier in the next.</p></div>
+              <div class="card"><strong>Environmental puzzles</strong><p>Light, sound, electricity, water, temperature and moving architecture.</p></div>
+              <div class="card"><strong>Moral puzzles</strong><p>Choose between saving a person, following a clue or preserving an important item.</p></div>
+            </div>
+          </section>
+
+          <section id="fairness">
+            <h2>12. Puzzle Fairness Rules</h2>
+            <ol>
+              <li>Required information must exist before the solution.</li>
+              <li>Important interactable objects need clear visual hierarchy.</li>
+              <li>No random tapping across the screen.</li>
+              <li>A failed attempt should provide useful feedback.</li>
+              <li>Players should understand why a solution worked.</li>
+              <li>Codes should logically connect to the environment.</li>
+              <li>Reading long notes should pause or slow the timer.</li>
+              <li>Repeated actions should become skippable.</li>
+              <li>Previously solved puzzles should support quick completion.</li>
+              <li>Hints should reveal reasoning gradually.</li>
+            </ol>
+          </section>
+
+          <section id="hints">
+            <h2>13. Hint System</h2>
+            <div class="grid three">
+              <div class="card"><strong>Level 1 — Direction</strong><p>“Something in the reception changes after the phone rings.”</p></div>
+              <div class="card"><strong>Level 2 — Focus</strong><p>“Watch what the caretaker places on the desk.”</p></div>
+              <div class="card"><strong>Level 3 — Guidance</strong><p>“Collect the key at 11:58 and use it on the generator-room door.”</p></div>
+            </div>
+          </section>
+
+          <section id="ui">
+            <h2>14. User Interface and Controls</h2>
+            <p><strong>Landscape mode</strong> is recommended for atmospheric exploration.</p>
+            <div class="grid two">
+              <div class="card">
+                <strong>Controls</strong>
+                <ul>
+                  <li>Tap: move or inspect</li>
+                  <li>Drag: rotate or manipulate</li>
+                  <li>Swipe: change viewing direction</li>
+                  <li>Pinch: zoom</li>
+                  <li>Hold: highlight known interactables</li>
+                  <li>Double tap: quick movement</li>
+                </ul>
+              </div>
+              <div class="card">
+                <strong>Gameplay UI</strong>
+                <ul>
+                  <li>Countdown clock</li>
+                  <li>Inventory</li>
+                  <li>Knowledge Board</li>
+                  <li>Current objective</li>
+                  <li>Pause and settings</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="visual">
+            <h2>15. Visual Direction</h2>
+            <p><strong>Stylised cinematic 3D</strong> is recommended instead of photorealism. It lowers asset cost, improves mobile performance and creates a stronger identity.</p>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Timeline Stage</th><th>Visual Treatment</th></tr>
+                <tr><td>Loop start</td><td>Warm amber and heritage gold</td></tr>
+                <tr><td>Mid-loop</td><td>Neutral moonlight and deep blue</td></tr>
+                <tr><td>Final minute</td><td>Red highlights and long shadows</td></tr>
+                <tr><td>Reset</td><td>White distortion and reversed particles</td></tr>
+                <tr><td>Hidden timeline</td><td>Desaturated cyan and ultraviolet symbols</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section id="audio">
+            <h2>16. Audio Design</h2>
+            <ul>
+              <li>11:57 — soft rain and hotel ambience</li>
+              <li>11:58 — distant telephone</li>
+              <li>11:59 — mechanical clock becomes louder</li>
+              <li>Last 30 seconds — additional music layers</li>
+              <li>Last 10 seconds — heartbeat and bell mechanism</li>
+              <li>Reset — reversed sound followed by silence</li>
+            </ul>
+            <p>No puzzle should depend on sound alone. Visual indicators, subtitles and vibration must provide alternatives.</p>
+          </section>
+
+          <section id="story">
+            <h2>17. Story Structure</h2>
+            <div class="chapter"><strong>Chapter 1 — The Lobby:</strong> Introduce the loop, generator, elevator and missing-sibling mystery.</div>
+            <div class="chapter"><strong>Chapter 2 — The Guest Floor:</strong> Introduce NPC schedules, Room 305 and the Timeline Anchor.</div>
+            <div class="chapter"><strong>Chapter 3 — The Ballroom:</strong> Large multi-step puzzle and reveal that the disaster was deliberate.</div>
+            <div class="chapter"><strong>Chapter 4 — The Clock Tower:</strong> Manipulate the master clock and connect past with present.</div>
+            <div class="chapter"><strong>Chapter 5 — The Laboratory:</strong> Final action chain, sibling resolution and ending selection.</div>
+          </section>
+
+          <section id="endings">
+            <h2>18. Ending Structure</h2>
+            <div class="grid two">
+              <div class="card"><strong>Escape Alone</strong><p>The player escapes, but the sibling remains trapped.</p></div>
+              <div class="card"><strong>Save the Sibling</strong><p>The player sacrifices the anchor and rescues the sibling.</p></div>
+              <div class="card"><strong>Reveal the Truth</strong><p>The experiment is exposed, but the player remains inside the hotel.</p></div>
+              <div class="card"><strong>Secret Ending — The First Loop</strong><p>The protagonist originally created the loop to prevent the sibling’s death.</p></div>
+            </div>
+          </section>
+
+          <section id="monetisation">
+            <h2>19. Monetisation Recommendation</h2>
+            <p>Forced ads should be avoided because they destroy mystery, tension and concentration.</p>
+            <div class="grid two">
+              <div class="card">
+                <strong>Recommended model</strong>
+                <ul>
+                  <li>Chapter 1 free</li>
+                  <li>Full game unlock: ₹299</li>
+                  <li>Launch offer: ₹199</li>
+                  <li>Optional soundtrack or art pack: ₹99</li>
+                  <li>No energy system</li>
+                  <li>No loot boxes</li>
+                </ul>
+              </div>
+              <div class="card">
+                <strong>Optional rewarded ad use</strong>
+                <ul>
+                  <li>Additional hint</li>
+                  <li>One-time timeline freeze</li>
+                  <li>Restart from a major discovery</li>
+                  <li>Cosmetic Knowledge Board theme</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="technical">
+            <h2>20. Technical Recommendation</h2>
+            <p><strong>Engine:</strong> Unity 6 with C#.</p>
+            <p>Unity is suitable because the project needs scenes, animation, lighting, audio, timeline events, mobile deployment and 3D asset workflows.</p>
+            <pre>GameManager
+├── LoopManager
+├── TimelineScheduler
+├── WorldStateRegistry
+├── PersistentKnowledgeSystem
+├── PuzzleManager
+├── InventoryManager
+├── NPCScheduleManager
+├── DialogueManager
+├── SaveSystem
+├── HintManager
+├── AudioDirector
+├── AnalyticsService
+└── UIManager</pre>
+            <h3>LoopManager responsibilities</h3>
+            <ul>
+              <li>Countdown</li>
+              <li>Reset initiation</li>
+              <li>Player respawn</li>
+              <li>World-state restoration</li>
+              <li>Persistent-state preservation</li>
+              <li>Reset visual and audio effects</li>
+            </ul>
+          </section>
+
+          <section id="backend">
+            <h2>21. Backend Requirements</h2>
+            <p>The first version does not need a custom backend. Local storage can manage progress, settings, achievements, clues and endings.</p>
+            <pre>game_started
+tutorial_completed
+loop_started
+loop_completed
+clue_discovered
+puzzle_attempted
+puzzle_solved
+hint_requested
+npc_dialogue_unlocked
+chapter_completed
+purchase_completed
+ending_reached</pre>
+          </section>
+
+          <section id="performance">
+            <h2>22. Performance Targets</h2>
+            <ul>
+              <li>Stable 30 FPS on lower mid-range Android devices</li>
+              <li>Optional 60 FPS mode</li>
+              <li>Initial download below approximately 200 MB</li>
+              <li>Offline gameplay</li>
+              <li>Graphics quality presets</li>
+              <li>Baked lighting</li>
+              <li>Compressed audio</li>
+              <li>Limited real-time shadows</li>
+              <li>Object pooling for reset effects</li>
+            </ul>
+          </section>
+
+          <section id="mvp">
+            <h2>23. MVP Scope</h2>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Content</th><th>MVP Target</th></tr>
+                <tr><td>Main locations</td><td>1 hotel floor plus basement</td></tr>
+                <tr><td>Explorable rooms</td><td>8</td></tr>
+                <tr><td>Main NPCs</td><td>3</td></tr>
+                <tr><td>Loop duration</td><td>5 minutes</td></tr>
+                <tr><td>Main puzzles</td><td>10–12</td></tr>
+                <tr><td>Small interactions</td><td>20–30</td></tr>
+                <tr><td>Major discoveries</td><td>15</td></tr>
+                <tr><td>Endings</td><td>2</td></tr>
+                <tr><td>Languages</td><td>English and Hindi</td></tr>
+                <tr><td>Gameplay duration</td><td>60–90 minutes</td></tr>
+                <tr><td>Backend</td><td>None</td></tr>
+                <tr><td>Multiplayer</td><td>None</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section id="roadmap">
+            <h2>24. Development Roadmap</h2>
+            <div class="grid two">
+              <div class="card"><strong>Phase 1 — Pre-production</strong><p>2–3 weeks: concept, rules, hotel map, story, puzzle graph and architecture.</p></div>
+              <div class="card"><strong>Phase 2 — Core prototype</strong><p>4–6 weeks: movement, reset system, one room, three puzzles and placeholder UI.</p></div>
+              <div class="card"><strong>Phase 3 — Vertical slice</strong><p>6–8 weeks: polished lobby, one NPC, audio timeline and six connected puzzles.</p></div>
+              <div class="card"><strong>Phase 4 — MVP production</strong><p>10–14 weeks: rooms, NPCs, save system, hints, localisation and analytics.</p></div>
+              <div class="card"><strong>Phase 5 — QA and optimisation</strong><p>4–6 weeks: device testing, puzzle balancing, accessibility and crash fixing.</p></div>
+              <div class="card"><strong>Phase 6 — Soft launch</strong><p>4 weeks: limited release, metrics analysis, store testing and final balancing.</p></div>
+            </div>
+            <div class="quote">Estimated total: 6–9 months for a small experienced team, 12–18 months for a solo beginner, and 6–10 weeks for a prototype.</div>
+          </section>
+
+          <section id="budget">
+            <h2>25. Rough Development Budget</h2>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Version</th><th>Estimated Range</th></tr>
+                <tr><td>Basic playable prototype</td><td>₹1.5–₹4 lakh</td></tr>
+                <tr><td>Polished vertical slice</td><td>₹5–₹12 lakh</td></tr>
+                <tr><td>Commercial MVP</td><td>₹10–₹25 lakh</td></tr>
+                <tr><td>Full polished indie game</td><td>₹30–₹80 lakh</td></tr>
+                <tr><td>Premium multi-platform production</td><td>₹1 crore+</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section id="team">
+            <h2>26. Minimum Team</h2>
+            <ul>
+              <li>1 Unity developer</li>
+              <li>1 game designer and writer</li>
+              <li>1 3D artist and animator</li>
+              <li>Part-time UI designer</li>
+              <li>Part-time sound designer</li>
+              <li>External puzzle testers</li>
+            </ul>
+            <p>AI can accelerate concept art, code scaffolding, dialogue drafts, documentation, localisation drafts and test cases, but it should not replace puzzle testing, narrative consistency, final art review or performance optimisation.</p>
+          </section>
+
+          <section id="risks">
+            <h2>27. Key Product Risks</h2>
+            <div class="grid two">
+              <div class="card"><strong>Repetition fatigue</strong><p>Use fast travel, dialogue skip and automatic entry of known codes.</p></div>
+              <div class="card"><strong>Timer anxiety</strong><p>Add story mode with slower time and timer pause while reading.</p></div>
+              <div class="card"><strong>Puzzle frustration</strong><p>Use staged hints and interactable highlighting.</p></div>
+              <div class="card"><strong>Content complexity</strong><p>Use controlled branches and dependency graphs.</p></div>
+              <div class="card"><strong>Story contradiction</strong><p>Use a central timeline scheduler and automated state tests.</p></div>
+              <div class="card"><strong>Brand conflict</strong><p>Rename before investing in store assets and marketing.</p></div>
+            </div>
+          </section>
+
+          <section id="metrics">
+            <h2>28. Success Metrics for Prototype Testing</h2>
+            <div class="grid three">
+              <div class="card"><div class="kpi">80%</div><span class="muted">Understand that knowledge persists</span></div>
+              <div class="card"><div class="kpi">70%</div><span class="muted">Complete first puzzle without direct solution</span></div>
+              <div class="card"><div class="kpi">60%</div><span class="muted">Voluntarily start a third loop</span></div>
+              <div class="card"><div class="kpi">&lt;20%</div><span class="muted">Quit before the first major clue</span></div>
+              <div class="card"><div class="kpi">15m+</div><span class="muted">Median play session target</span></div>
+              <div class="card"><div class="kpi">40%</div><span class="muted">Interested in buying the next chapter</span></div>
+            </div>
+            <div class="quote">The most important question: Does every reset make the player feel smarter?</div>
+          </section>
+
+          <section id="recommendation">
+            <h2>29. Final Recommendation</h2>
+            <ol>
+              <li>Use “Time Loop Escape” only as a temporary name.</li>
+              <li>Build a compact hotel instead of an open world.</li>
+              <li>Use knowledge as the main progression system.</li>
+              <li>Keep each loop approximately five minutes.</li>
+              <li>Design around touch interaction rather than virtual joysticks.</li>
+              <li>Launch on Android first.</li>
+              <li>Use Unity 6 and C#.</li>
+              <li>Keep the first version offline and backend-free.</li>
+              <li>Use a free prologue and one-time full unlock.</li>
+              <li>Test every puzzle with external players.</li>
+              <li>Build a vertical slice before producing the full game.</li>
+              <li>Use the Indian heritage hotel to create a unique visual identity.</li>
+            </ol>
+            <div class="quote"><strong>Final product statement:</strong> 11:57 — The Last Check-In is a cinematic mobile mystery set inside a Rajasthan-inspired heritage hotel trapped in its final five minutes. Rooms, objects and people reset at midnight, but the player’s discoveries remain. By observing routines, manipulating events and connecting clues across repeated timelines, the player must uncover the hotel’s truth, rescue a missing sibling and decide whether the loop should ever be broken.</div>
+          </section>
+
+        </div>
+      </div>
+
+      <footer>
+        Time Loop Escape — Complete Research Report • Single-file responsive HTML
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelector('aside').classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>
