@@ -1,0 +1,6 @@
+{
+  "name": "Typing Runner",
+  "description": "A dynamic and interactive mobile typing game where typing speed and accuracy propel your runner to victory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
