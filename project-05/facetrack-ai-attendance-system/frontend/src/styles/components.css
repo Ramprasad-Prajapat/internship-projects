@@ -1,0 +1,1348 @@
+/* FaceTrack AI — Component styles (overhaul).
+   Builds on the design tokens in theme.css. Covers tables, modals, forms,
+   filters, badges, charts, metrics, tabs, toasts, camera/scan UI, empty/skeleton
+   states, and the richer page chrome used across feature modules. */
+
+/* Secondary tokens. Dark values restored to match theme.css's dark palette
+   (white-translucent glass surfaces + deep shadows) after the light-theme
+   revert. Card-2 / line mirror --ft-card-bg / --ft-card-border at lower alpha;
+   --ft-info matches the sky tint (rgba(56,189,248,...)) used by metrics/badges. */
+:root {
+  --ft-info: #38bdf8;
+  --ft-muted: #64748b;
+  --ft-card-2: rgba(255, 255, 255, 0.05);
+  --ft-line: rgba(255, 255, 255, 0.08);
+  --ft-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --ft-shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- page chrome ---------- */
+.ft-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 1280px;
+}
+.ft-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.ft-page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------- section card ---------- */
+.ft-section {
+  background: var(--ft-card-bg);
+  border: 1px solid var(--ft-card-border);
+  border-radius: var(--ft-radius);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 18px 20px;
+}
+.ft-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.ft-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ft-section-sub {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--ft-text-dim);
+}
+
+/* ---------- extra buttons ---------- */
+.ft-btn--danger {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+}
+.ft-btn--danger:hover {
+  border-color: var(--ft-red);
+  color: #fff;
+  background: rgba(239, 68, 68, 0.28);
+}
+.ft-btn--success {
+  background: rgba(34, 197, 94, 0.16);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #bbf7d0;
+}
+.ft-btn--success:hover {
+  border-color: var(--ft-green);
+  color: #fff;
+  background: rgba(34, 197, 94, 0.28);
+}
+.ft-btn--subtle {
+  background: var(--ft-card-2);
+  border-color: var(--ft-card-border);
+  color: var(--ft-text-dim);
+}
+.ft-btn--subtle:hover {
+  color: var(--ft-text);
+  border-color: var(--ft-primary);
+}
+.ft-btn--sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+.ft-btn--block {
+  width: 100%;
+}
+
+/* ---------- toolbar + filters ---------- */
+.ft-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.ft-toolbar-grow {
+  flex: 1;
+  min-width: 180px;
+}
+.ft-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+.ft-search input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border-radius: 10px;
+  border: 1px solid var(--ft-card-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ft-text);
+  outline: none;
+}
+.ft-search input:focus {
+  border-color: var(--ft-primary);
+}
+.ft-search-ico {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ft-text-dim);
+}
+.ft-select {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ft-card-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ft-text);
+  outline: none;
+  cursor: pointer;
+}
+.ft-select:focus {
+  border-color: var(--ft-primary);
+}
+.ft-select option {
+  color: #04121a;
+}
+
+/* segmented filter chips */
+.ft-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ft-chip {
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--ft-card-border);
+  background: var(--ft-card-2);
+  color: var(--ft-text-dim);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ft-chip:hover {
+  color: var(--ft-text);
+}
+.ft-chip--active {
+  background: rgba(0, 212, 255, 0.16);
+  border-color: var(--ft-primary);
+  color: var(--ft-primary);
+  font-weight: 600;
+}
+
+/* ---------- table ---------- */
+.ft-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--ft-line);
+}
+.ft-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 560px;
+}
+.ft-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ft-text-dim);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+.ft-table tbody td {
+  padding: 11px 14px;
+  border-top: 1px solid var(--ft-line);
+  vertical-align: middle;
+}
+.ft-table tbody tr {
+  transition: background 0.12s ease;
+}
+.ft-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.035);
+}
+.ft-table .ft-th-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.ft-table .ft-th-sortable:hover {
+  color: var(--ft-primary);
+}
+.ft-cell-strong {
+  font-weight: 600;
+  color: var(--ft-text);
+}
+.ft-cell-dim {
+  color: var(--ft-text-dim);
+}
+.ft-cell-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* employee identity cell */
+.ft-id-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ft-id-name {
+  font-weight: 600;
+  line-height: 1.1;
+}
+.ft-id-sub {
+  font-size: 0.72rem;
+  color: var(--ft-text-dim);
+}
+
+/* ---------- avatars ---------- */
+.ft-avatar--sm {
+  width: 26px;
+  height: 26px;
+  font-size: 0.62rem;
+}
+.ft-avatar--lg {
+  width: 56px;
+  height: 56px;
+  font-size: 1.1rem;
+}
+
+/* ---------- badges ---------- */
+.ft-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.ft-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.ft-badge--success { background: rgba(34, 197, 94, 0.14); color: #4ade80; border-color: rgba(34, 197, 94, 0.3); }
+.ft-badge--danger  { background: rgba(239, 68, 68, 0.14); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+.ft-badge--warning { background: rgba(234, 179, 8, 0.14); color: #facc15; border-color: rgba(234, 179, 8, 0.3); }
+.ft-badge--info    { background: rgba(56, 189, 248, 0.14); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); }
+.ft-badge--accent  { background: rgba(139, 92, 246, 0.14); color: #a78bfa; border-color: rgba(139, 92, 246, 0.3); }
+.ft-badge--primary { background: rgba(0, 212, 255, 0.14); color: var(--ft-primary); border-color: rgba(0, 212, 255, 0.3); }
+.ft-badge--muted   { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.3); }
+.ft-badge--plain::before { display: none; }
+
+/* ---------- modal ---------- */
+.ft-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(2, 6, 18, 0.62);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: ft-fade 0.15s ease;
+}
+.ft-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #0b1222;
+  border: 1px solid var(--ft-card-border);
+  border-radius: var(--ft-radius);
+  box-shadow: var(--ft-shadow);
+  animation: ft-pop 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ft-modal--lg { max-width: 760px; }
+.ft-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ft-line);
+  position: sticky;
+  top: 0;
+  background: #0b1222;
+}
+.ft-modal-title { margin: 0; font-size: 1.05rem; font-weight: 600; }
+.ft-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.ft-modal-foot {
+  padding: 14px 20px;
+  border-top: 1px solid var(--ft-line);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+@keyframes ft-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ft-pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* ---------- forms ---------- */
+.ft-form { display: flex; flex-direction: column; gap: 14px; }
+.ft-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.ft-field textarea {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ft-card-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ft-text);
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 84px;
+}
+.ft-field textarea:focus { border-color: var(--ft-primary); }
+.ft-field--error input,
+.ft-field--error select,
+.ft-field--error textarea { border-color: var(--ft-red); }
+.ft-field-error { color: #fca5a5; font-size: 0.74rem; }
+.ft-field-hint { color: var(--ft-text-dim); font-size: 0.72rem; }
+
+/* ---------- toasts ---------- */
+.ft-toast-wrap {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+}
+.ft-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #0d1526;
+  border: 1px solid var(--ft-card-border);
+  box-shadow: var(--ft-shadow-sm);
+  animation: ft-slide-in 0.2s ease;
+}
+.ft-toast-msg { flex: 1; font-size: 0.85rem; }
+.ft-toast-x {
+  background: none;
+  border: none;
+  color: var(--ft-text-dim);
+  cursor: pointer;
+  display: inline-flex;
+}
+.ft-toast-x:hover { color: var(--ft-text); }
+.ft-toast--success { border-left: 3px solid var(--ft-green); }
+.ft-toast--success .ft-toast-ico { color: var(--ft-green); }
+.ft-toast--error { border-left: 3px solid var(--ft-red); }
+.ft-toast--error .ft-toast-ico { color: var(--ft-red); }
+.ft-toast--warning { border-left: 3px solid var(--ft-yellow); }
+.ft-toast--warning .ft-toast-ico { color: var(--ft-yellow); }
+.ft-toast--info { border-left: 3px solid var(--ft-info); }
+.ft-toast--info .ft-toast-ico { color: var(--ft-info); }
+@keyframes ft-slide-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+/* ---------- metric cards ---------- */
+.ft-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+.ft-metric {
+  background: var(--ft-card-bg);
+  border: 1px solid var(--ft-card-border);
+  border-radius: var(--ft-radius);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.ft-metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ft-metric-ico {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--ft-primary);
+}
+.ft-metric-value { font-size: 1.7rem; font-weight: 700; line-height: 1; }
+.ft-metric-label { font-size: 0.8rem; color: var(--ft-text-dim); }
+.ft-metric-delta { font-size: 0.72rem; font-weight: 600; }
+.ft-metric-delta--up { color: var(--ft-green); }
+.ft-metric-delta--down { color: var(--ft-red); }
+.ft-metric--primary .ft-metric-ico { background: rgba(0, 212, 255, 0.12); color: var(--ft-primary); }
+.ft-metric--success .ft-metric-ico { background: rgba(34, 197, 94, 0.12); color: var(--ft-green); }
+.ft-metric--danger .ft-metric-ico { background: rgba(239, 68, 68, 0.12); color: var(--ft-red); }
+.ft-metric--warning .ft-metric-ico { background: rgba(234, 179, 8, 0.12); color: var(--ft-yellow); }
+.ft-metric--accent .ft-metric-ico { background: rgba(139, 92, 246, 0.12); color: var(--ft-accent); }
+.ft-metric--info .ft-metric-ico { background: rgba(56, 189, 248, 0.12); color: var(--ft-info); }
+
+/* ---------- charts ---------- */
+.ft-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.ft-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.ft-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.ft-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: var(--ft-text-dim);
+}
+.ft-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+.ft-bar-track {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 150px;
+  padding-top: 8px;
+}
+.ft-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.ft-bar {
+  width: 100%;
+  max-width: 34px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, var(--ft-primary), rgba(0, 212, 255, 0.2));
+  transition: height 0.4s ease;
+  min-height: 3px;
+}
+.ft-bar-label { font-size: 0.68rem; color: var(--ft-text-dim); }
+.ft-bar-value { font-size: 0.72rem; font-weight: 600; }
+
+/* ---------- tabs ---------- */
+.ft-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--ft-line);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.ft-tab {
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ft-text-dim);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.ft-tab:hover { color: var(--ft-text); }
+.ft-tab--active {
+  color: var(--ft-primary);
+  border-bottom-color: var(--ft-primary);
+  font-weight: 600;
+}
+
+/* ---------- empty + skeleton ---------- */
+.ft-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 44px 20px;
+  text-align: center;
+  color: var(--ft-text-dim);
+}
+.ft-empty-ico {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ft-card-2);
+  color: var(--ft-primary);
+}
+.ft-skel {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 37%, rgba(255,255,255,0.05) 63%);
+  background-size: 400% 100%;
+  border-radius: 8px;
+  animation: ft-shimmer 1.3s ease infinite;
+}
+@keyframes ft-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+/* ---------- pagination ---------- */
+.ft-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.ft-pager-info { font-size: 0.78rem; color: var(--ft-text-dim); }
+.ft-pager-btns { display: flex; gap: 6px; }
+
+/* ---------- pill / inline meta ---------- */
+.ft-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--ft-card-2);
+  border: 1px solid var(--ft-card-border);
+  font-size: 0.76rem;
+  color: var(--ft-text-dim);
+}
+.ft-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+.ft-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.ft-meta-key { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ft-text-dim); }
+.ft-meta-val { font-size: 0.9rem; font-weight: 500; }
+
+/* ---------- progress bar ---------- */
+.ft-progress {
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.ft-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--ft-primary), var(--ft-accent));
+  transition: width 0.4s ease;
+}
+
+/* ---------- camera / scan UI ---------- */
+.ft-scan-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.ft-camera {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #05080f;
+  border: 1px solid var(--ft-card-border);
+}
+.ft-camera video,
+.ft-camera canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ft-camera video { transform: scaleX(-1); }
+.ft-scan-frame {
+  position: absolute;
+  inset: 14%;
+  border: 2px solid rgba(0, 212, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(2, 6, 18, 0.35);
+  pointer-events: none;
+}
+.ft-scan-frame::before,
+.ft-scan-frame::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ft-primary), transparent);
+  animation: ft-scanline 2.2s ease-in-out infinite;
+}
+@keyframes ft-scanline {
+  0% { top: 4%; opacity: 0.2; }
+  50% { top: 94%; opacity: 1; }
+  100% { top: 4%; opacity: 0.2; }
+}
+.ft-camera-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--ft-text-dim);
+  text-align: center;
+  padding: 20px;
+}
+.ft-camera-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+}
+.ft-scan-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ft-scan-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: var(--ft-card-2);
+  border: 1px solid var(--ft-card-border);
+}
+.ft-scan-row-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.85rem;
+  color: var(--ft-text-dim);
+}
+
+/* ---------- notification bell ---------- */
+.ft-notif { position: relative; }
+.ft-notif-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--ft-red);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px var(--ft-bg);
+}
+.ft-notif-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 320px;
+  max-width: 86vw;
+  z-index: 40;
+  padding: 6px;
+}
+.ft-notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--ft-line);
+  margin-bottom: 4px;
+}
+.ft-notif-list { max-height: 360px; overflow-y: auto; }
+.ft-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+.ft-notif-item:hover { background: rgba(255, 255, 255, 0.05); }
+.ft-notif-item--unread { background: rgba(0, 212, 255, 0.06); }
+.ft-notif-bar { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
+.ft-notif-title { font-size: 0.82rem; font-weight: 600; }
+.ft-notif-text { font-size: 0.76rem; color: var(--ft-text-dim); }
+.ft-notif-time { font-size: 0.68rem; color: var(--ft-text-dim); white-space: nowrap; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 820px) {
+  .ft-scan-layout { grid-template-columns: 1fr; }
+  .ft-form-row { grid-template-columns: 1fr; }
+  .ft-notif-menu { position: fixed; right: 10px; left: 10px; width: auto; }
+}
+
+/* =====================================================================
+   ADDED — new reusable components (MockDataNotice, ConnectedNextActions,
+   LocationStatusPanel, WorkflowStepper) + branch map placeholder. Loads
+   last; reuses existing tokens. Scoped names avoid clashing with the
+   marketing .ft-land-* set in theme.css.
+   ===================================================================== */
+
+/* ConnectedNextActions — hint sub-line on the reused .ft-home-action card */
+.ft-cna-hint {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--ft-text-dim);
+}
+/* danger tone for .ft-home-action (theme.css only ships accent/success/warning) */
+.ft-home-action--danger .ft-home-action-icon {
+  color: var(--ft-red);
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* MockDataNotice */
+.ft-mocknotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-color: rgba(0, 212, 255, 0.25);
+}
+.ft-mocknotice-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+}
+.ft-mocknotice strong { font-size: 0.88rem; }
+.ft-mocknotice p {
+  margin: 3px 0 0;
+  font-size: 0.82rem;
+  color: var(--ft-text-dim);
+  line-height: 1.5;
+}
+.ft-mocknotice-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ft-text-dim);
+}
+.ft-mocknotice-inline svg { color: var(--ft-primary); flex-shrink: 0; margin-top: 2px; }
+.ft-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  white-space: nowrap;
+}
+
+/* LocationStatusPanel */
+.ft-loc-panel {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ft-card-2);
+  border: 1px solid var(--ft-card-border);
+}
+.ft-loc-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ft-loc-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+}
+.ft-loc-headtext { flex: 1; min-width: 0; }
+.ft-loc-branch { font-weight: 600; font-size: 0.95rem; }
+.ft-loc-addr { font-size: 0.78rem; color: var(--ft-text-dim); }
+
+/* Branch map placeholder (no real map in mock mode) */
+.ft-map-placeholder {
+  position: relative;
+  min-height: 210px;
+  border: 1px dashed var(--ft-card-border);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  background-image:
+    radial-gradient(circle at 30% 35%, rgba(0, 212, 255, 0.1), transparent 60%),
+    radial-gradient(circle at 72% 68%, rgba(139, 92, 246, 0.1), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: auto, auto, 30px 30px, 30px 30px;
+}
+.ft-map-pin {
+  color: var(--ft-primary);
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.55));
+}
+.ft-map-caption { font-size: 0.85rem; color: var(--ft-text-dim); max-width: 460px; }
+.ft-map-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* WorkflowStepper */
+.ft-stepper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 4px 0 2px;
+}
+.ft-stepper-item { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 130px; }
+.ft-stepper-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--ft-card-border);
+  background: var(--ft-card-2);
+  color: var(--ft-text-dim);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.ft-stepper-node.is-active {
+  color: var(--ft-primary);
+  border-color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.12);
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.35);
+}
+.ft-stepper-node.is-done {
+  color: #04121a;
+  border-color: transparent;
+  background: var(--ft-green);
+}
+.ft-stepper-node.is-error {
+  color: var(--ft-red);
+  border-color: var(--ft-red);
+  background: rgba(239, 68, 68, 0.14);
+}
+.ft-stepper-label { font-size: 0.8rem; color: var(--ft-text); white-space: nowrap; }
+.ft-stepper-line {
+  flex: 1;
+  height: 2px;
+  min-width: 14px;
+  border-radius: 2px;
+  background: var(--ft-line);
+}
+.ft-stepper-line.is-done { background: var(--ft-green); }
+
+/* Landing — "problem" icon modifier (red) for IndustryProblemCards.
+   More specific + loaded after theme.css, so it overrides the primary icon. */
+.ft-land-card--problem .ft-land-card-icon {
+  color: var(--ft-red);
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+.ft-land-card--problem:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 820px) {
+  .ft-stepper-item { flex: 1 1 100%; }
+  .ft-stepper-line { display: none; }
+}
+
+/* =====================================================================
+   FINAL POLISH — spacing, button/badge consistency, empty states,
+   connected-actions affordance, responsive refinements. Additive only;
+   loads last so it refines the earlier rules without rewriting them.
+   ===================================================================== */
+
+/* Empty states — clearer title/message typography + breathing room */
+.ft-empty strong {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--ft-text);
+}
+.ft-empty p {
+  line-height: 1.55;
+  font-size: 0.84rem;
+}
+
+/* ConnectedNextActions — arrow now slides + tints on hover (clear affordance)
+   and danger-toned cards hover red instead of the default cyan */
+.ft-home-action-arrow {
+  transition: transform 0.16s ease, color 0.16s ease;
+}
+.ft-home-action:hover .ft-home-action-arrow {
+  color: var(--ft-primary);
+  transform: translateX(3px);
+}
+.ft-home-action--danger:hover {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.06);
+}
+.ft-home-action--danger:hover .ft-home-action-arrow {
+  color: var(--ft-red);
+}
+
+/* "Soon" badge — rounded, tinted chip so roadmap + disabled-nav markers read
+   as real status badges (consistent with .ft-badge). Overrides theme.css. */
+.ft-soon {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+/* MockDataNotice banner — match the rounded radius of sibling glass cards */
+.ft-mocknotice { border-radius: 14px; }
+
+/* Responsive — tighten page/section spacing on small screens so dense
+   feature pages don't feel cramped against the edges */
+@media (max-width: 560px) {
+  .ft-page { gap: 14px; }
+  .ft-section { padding: 16px 14px; }
+  .ft-page-head { align-items: flex-start; }
+  .ft-loc-panel { padding: 12px 14px; }
+  .ft-home-action { padding: 14px 14px; }
+}
+
+/* =====================================================================
+   Roadmap ("Backend-ready by design") — auto-scrolling marquee carousel.
+   CSS-only. The single ROADMAP list is rendered twice in the component
+   (the second copy is aria-hidden), so the track loops seamlessly with
+   translateX(-50%). Each card uses a uniform right margin (not flex gap)
+   so spacing across the seam matches and the loop has no jump. Pauses on
+   hover / focus-within; disabled under prefers-reduced-motion. Additive,
+   loads last — the card design (.ft-land-card / .ft-glass) is unchanged.
+   ===================================================================== */
+.ft-roadmap-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* vertical room so the card's hover lift + glow aren't clipped */
+  padding: 10px 0 28px;
+  /* soft edge fade so cards slide in/out instead of hard-cutting */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+
+.ft-roadmap-track {
+  display: flex;
+  width: max-content;
+  animation: ft-roadmap-scroll 38s linear infinite;
+  will-change: transform;
+}
+
+/* one cell = card width + trailing margin (kept uniform for a seamless loop) */
+.ft-roadmap-card {
+  flex: 0 0 auto;
+  width: clamp(248px, 78vw, 290px);
+  margin-right: 18px;
+  box-sizing: border-box;
+}
+
+/* pause on hover anywhere in the section, or when focus is inside a card */
+.ft-roadmap-marquee:hover .ft-roadmap-track,
+.ft-roadmap-marquee:focus-within .ft-roadmap-track {
+  animation-play-state: paused;
+}
+
+@keyframes ft-roadmap-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Accessibility: no motion → static, wrapped first set (clones hidden) */
+@media (prefers-reduced-motion: reduce) {
+  .ft-roadmap-marquee {
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .ft-roadmap-track {
+    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+  }
+  .ft-roadmap-card { margin-right: 0; }
+  .ft-roadmap-card[data-clone='true'] { display: none; }
+}
+
+/* =====================================================================
+   Branch network marquee (Rajasthan offices)
+   Same approach as the roadmap marquee but FASTER (14s) so the six
+   branch cards move as one continuous horizontal row instead of
+   wrapping into a second grid row. The single RAJASTHAN_OFFICES list is
+   rendered twice (the second copy is aria-hidden), so the track loops
+   seamlessly with translateX(-50%). Uniform card right-margin (not flex
+   gap) keeps spacing across the seam matched for a jump-free loop.
+   Pauses on hover / focus-within; disabled under prefers-reduced-motion.
+   Additive — the card design (.ft-land-card / .ft-glass) is unchanged.
+   ===================================================================== */
+.ft-branch-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* vertical room so the card's hover lift + glow aren't clipped */
+  padding: 10px 0 28px;
+  /* soft edge fade so cards slide in/out instead of hard-cutting */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+
+.ft-branch-track {
+  display: flex;
+  width: max-content;
+  /* faster than the 38s roadmap marquee, still readable */
+  animation: ft-branch-scroll 14s linear infinite;
+  will-change: transform;
+}
+
+/* one cell = card width + trailing margin (kept uniform for a seamless loop) */
+.ft-branch-card {
+  flex: 0 0 auto;
+  width: clamp(232px, 74vw, 274px);
+  margin-right: 18px;
+  box-sizing: border-box;
+}
+
+/* pause on hover anywhere in the section, or when focus is inside a card */
+.ft-branch-marquee:hover .ft-branch-track,
+.ft-branch-marquee:focus-within .ft-branch-track {
+  animation-play-state: paused;
+}
+
+@keyframes ft-branch-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Accessibility: no motion → static, wrapped first set (clones hidden) */
+@media (prefers-reduced-motion: reduce) {
+  .ft-branch-marquee {
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .ft-branch-track {
+    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+  }
+  .ft-branch-card { margin-right: 0; }
+  .ft-branch-card[data-clone='true'] { display: none; }
+}
+
+/* ============================================================
+   MODERN REFRESH (2026-06-23) - cohesive dark AI SaaS visual layer.
+   Pure styling, loaded last so it elevates the existing component
+   classes without changing any markup, routes, logic, or mock data.
+   Targets shared tokens/classes only -> propagates app-wide.
+   ============================================================ */
+
+/* ---- ambient background: deep navy + cyan/violet aurora + faint grid ---- */
+body {
+  background-color: var(--ft-bg);
+  background-image:
+    radial-gradient(1100px 720px at 10% -10%, rgba(0, 212, 255, 0.16), transparent 60%),
+    radial-gradient(1000px 720px at 92% -4%, rgba(139, 92, 246, 0.17), transparent 60%),
+    radial-gradient(900px 820px at 50% 120%, rgba(59, 130, 246, 0.10), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(180deg, #050816 0%, #070b1d 55%, #04060f 100%);
+  background-size: auto, auto, auto, 48px 48px, 48px 48px, auto;
+  background-attachment: fixed;
+}
+#root { position: relative; z-index: 1; }
+
+/* ---- text selection + custom scrollbars ---- */
+::selection { background: rgba(0, 212, 255, 0.3); color: #fff; }
+* { scrollbar-width: thin; scrollbar-color: rgba(0, 212, 255, 0.4) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.5), rgba(139, 92, 246, 0.5));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.7); background-clip: padding-box; }
+
+/* ---- universal keyboard focus ring (accessibility) ---- */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--ft-ring);
+  border-radius: 10px;
+}
+
+/* ---- glass surfaces: more depth, inset highlight, hover lift ---- */
+.ft-glass, .ft-section, .ft-stat, .ft-metric, .ft-card {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    rgba(10, 15, 36, 0.55);
+  border: 1px solid var(--ft-card-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--ft-shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.ft-section:hover, .ft-stat:hover, .ft-metric:hover, .ft-card:hover {
+  border-color: rgba(0, 212, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 46px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- buttons ---- */
+.ft-btn { letter-spacing: 0.01em; border-radius: 12px; }
+.ft-btn--primary {
+  background: var(--ft-grad-primary);
+  color: #04121a;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0, 150, 220, 0.32);
+}
+.ft-btn--primary:hover { box-shadow: 0 8px 26px rgba(0, 200, 255, 0.5), var(--ft-glow-primary); filter: brightness(1.05); }
+.ft-btn--accent { background: var(--ft-grad-accent); color: #fff; border: none; }
+.ft-btn--accent:hover { box-shadow: var(--ft-glow-accent); filter: brightness(1.06); }
+.ft-btn--ghost, .ft-btn--subtle {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--ft-card-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.ft-btn--ghost:hover, .ft-btn--subtle:hover {
+  border-color: rgba(0, 212, 255, 0.55);
+  color: var(--ft-primary);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+/* ---- inputs / selects / textareas: clear fields + cyan focus ring ---- */
+.ft-input, .ft-select, .ft-textarea,
+.ft-field input, .ft-field select, .ft-field textarea {
+  background: rgba(8, 12, 28, 0.7);
+  border: 1px solid var(--ft-card-border);
+  border-radius: 11px;
+  color: var(--ft-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ft-input::placeholder, .ft-textarea::placeholder,
+.ft-field input::placeholder, .ft-field textarea::placeholder { color: rgba(248, 250, 252, 0.4); }
+.ft-input:focus, .ft-select:focus, .ft-textarea:focus,
+.ft-field input:focus, .ft-field select:focus, .ft-field textarea:focus {
+  outline: none;
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: var(--ft-ring);
+  background: rgba(8, 12, 28, 0.95);
+}
+
+/* ---- tables (overflow untouched so mobile scroll still works) ---- */
+.ft-table thead th {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  color: var(--ft-text-dim);
+  border-bottom: 1px solid var(--ft-card-border);
+}
+.ft-table tbody tr { transition: background 0.14s ease, box-shadow 0.14s ease; }
+.ft-table tbody tr:hover {
+  background: rgba(0, 212, 255, 0.06);
+  box-shadow: inset 3px 0 0 var(--ft-primary);
+}
+
+/* ---- badges: crisp pills with a glowing status dot ---- */
+.ft-badge { border-radius: 999px; font-weight: 600; letter-spacing: 0.01em; }
+.ft-badge::before { box-shadow: 0 0 8px currentColor; }
+
+/* ---- sidebar: gradient panel + glowing active item ---- */
+.ft-sidebar {
+  background: linear-gradient(180deg, rgba(10, 15, 36, 0.92), rgba(5, 8, 22, 0.94));
+  border-right: 1px solid var(--ft-card-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.ft-nav-item { border-radius: 12px; transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; }
+.ft-nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--ft-text); }
+.ft-nav-item--active {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(139, 92, 246, 0.14));
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--ft-primary), 0 0 18px rgba(0, 212, 255, 0.16);
+}
+.ft-nav-item--active svg { color: var(--ft-primary); filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.6)); }
+
+/* ---- dashboard navbar: sticky frosted bar ---- */
+.ft-navbar {
+  background: rgba(7, 11, 28, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--ft-card-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* ---- stat / metric cards: accent top line, glow icon, gradient KPI value ---- */
+.ft-stat, .ft-metric { position: relative; overflow: hidden; }
+.ft-stat::after, .ft-metric::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--ft-grad-brand);
+  opacity: 0.85;
+}
+.ft-stat--primary .ft-stat-value, .ft-metric--primary .ft-metric-value {
+  background: var(--ft-grad-primary);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ft-metric-ico { box-shadow: 0 0 18px rgba(0, 212, 255, 0.15); }
+
+/* ---- hero (landing): gradient headline ---- */
+.ft-hero-title {
+  background: linear-gradient(118deg, #ffffff 28%, #7dd3fc 62%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---- camera / face-scan: premium biometric panel ---- */
+.ft-camera {
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  box-shadow: inset 0 0 60px rgba(0, 212, 255, 0.08), 0 18px 40px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at 50% 38%, rgba(0, 212, 255, 0.07), rgba(3, 6, 15, 0.92));
+}
+.ft-camera-badge {
+  background: rgba(34, 197, 94, 0.16);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.35);
+}
+
+/* ---- modal polish ---- */
+.ft-modal { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 212, 255, 0.08); }
+
+/* ---- small-screen guard (keeps dashboard usable on mobile) ---- */
+@media (max-width: 640px) {
+  .ft-content { padding: 16px; }
+  .ft-page-title { font-size: 1.3rem; }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ft-glass, .ft-section, .ft-stat, .ft-metric, .ft-card,
+  .ft-btn, .ft-nav-item, .ft-table tbody tr {
+    transition: none;
+  }
+}
