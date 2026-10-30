@@ -21,11 +21,16 @@ test.describe("project-04: eco-ninja-gesture-slicing-game", () => {
     test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
     await page.goto(config.webUrl, { waitUntil: "domcontentloaded" });
 
-    // 1. Click how to play / info button
+    // 1. Click how to play / info button and close modal
     const howToBtn = page.locator("#btn-how-to-play");
     if (await howToBtn.isVisible()) {
       await howToBtn.click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(300);
+      const closeBtn = page.locator("#btn-modal-close, #btn-modal-start").first();
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+        await page.waitForTimeout(300);
+      }
     }
 
     // 2. Click start game

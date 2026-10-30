@@ -9,12 +9,7 @@ class WebSocketService {
   }
 
   connect(onConnectedCallback, onErrorCallback) {
-    let envWsUrl = '';
-    try {
-      envWsUrl = (new Function('return import.meta.env.VITE_WS_BASE_URL'))() || '';
-    } catch (_e) {
-      envWsUrl = '';
-    }
+    const envWsUrl = (import.meta.env && import.meta.env.VITE_WS_BASE_URL) || '';
     const protocol = typeof window !== 'undefined' && window.location ? window.location.protocol : 'http:';
     const host = typeof window !== 'undefined' && window.location ? window.location.host : '';
     const defaultWsUrl = `${protocol}//${host}/ws-gamepulse`;

@@ -1,12 +1,6 @@
 import axios from 'axios';
 
-let baseUrl = '/api';
-try {
-  baseUrl = (new Function('return import.meta.env.VITE_API_BASE_URL'))() || '/api';
-} catch (_e) {
-  baseUrl = '/api';
-}
-export const API_BASE_URL = baseUrl;
+export const API_BASE_URL = (import.meta.env && import.meta.env.VITE_API_BASE_URL) || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

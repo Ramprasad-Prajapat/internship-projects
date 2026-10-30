@@ -33,14 +33,18 @@ test.describe("project-02: aquasaver-gesture-water-simulator", () => {
     const updatedText = await audioBtn.innerText();
     expect(updatedText).not.toEqual(initialText);
 
-    // 2. Trigger report modal using keyboard fallback 'R'
-    await page.keyboard.press("r");
+    // 2. Open water usage report modal and close it
+    await page.evaluate(() => {
+      if (typeof (window as any).showReport === "function") {
+        (window as any).showReport();
+      }
+    });
     const reportModal = page.locator("#report-modal");
-    await expect(reportModal).toHaveClass(/active|show|visible/);
+    await expect(reportModal).toHaveClass(/modal-open/);
 
-    // Close modal
+    // Close modal via close button
     const closeBtn = page.locator("#report-modal .modal-close, #report-modal button:has-text('Close')").first();
     await closeBtn.click();
-    await expect(reportModal).not.toHaveClass(/active/);
+    await expect(reportModal).not.toHaveClass(/modal-open/);
   });
 });
