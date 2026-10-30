@@ -1,0 +1,122 @@
+{
+  "production": {
+    "project-01": {
+      "name": "ai-english-learning-platform",
+      "type": "full-stack",
+      "webUrl": "TODO",
+      "apiUrl": "TODO"
+    },
+    "project-02": {
+      "name": "aquasaver-gesture-water-simulator",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-03": {
+      "name": "developer-portfolio-react-typescript",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-04": {
+      "name": "eco-ninja-gesture-slicing-game",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-05": {
+      "name": "facetrack-ai-attendance-system",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-06": {
+      "name": "gamepulse-live-cricket-scoring-platform",
+      "type": "full-stack",
+      "webUrl": "TODO",
+      "apiUrl": "TODO",
+      "wsUrl": "TODO"
+    },
+    "project-07": {
+      "name": "mental-wellness-chat-and-meditation-platform",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-11": {
+      "name": "smart-home-gesture-control-dashboard",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-12": {
+      "name": "smart-office-voice-dashboard",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-14": {
+      "name": "touchless-hospital-gesture-interface",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    },
+    "project-16": {
+      "name": "vocalic-voice-calculator-web-app",
+      "type": "frontend-only",
+      "webUrl": "TODO"
+    }
+  },
+  "local": {
+    "project-01": {
+      "name": "ai-english-learning-platform",
+      "type": "full-stack",
+      "webUrl": "http://127.0.0.1:4101",
+      "apiUrl": "http://127.0.0.1:8080/api"
+    },
+    "project-02": {
+      "name": "aquasaver-gesture-water-simulator",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4102"
+    },
+    "project-03": {
+      "name": "developer-portfolio-react-typescript",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4103"
+    },
+    "project-04": {
+      "name": "eco-ninja-gesture-slicing-game",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4104"
+    },
+    "project-05": {
+      "name": "facetrack-ai-attendance-system",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4105"
+    },
+    "project-06": {
+      "name": "gamepulse-live-cricket-scoring-platform",
+      "type": "full-stack",
+      "webUrl": "http://127.0.0.1:4106",
+      "apiUrl": "http://127.0.0.1:8081/api",
+      "wsUrl": "http://127.0.0.1:8081/ws-gamepulse"
+    },
+    "project-07": {
+      "name": "mental-wellness-chat-and-meditation-platform",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4107"
+    },
+    "project-11": {
+      "name": "smart-home-gesture-control-dashboard",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4111"
+    },
+    "project-12": {
+      "name": "smart-office-voice-dashboard",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4112"
+    },
+    "project-14": {
+      "name": "touchless-hospital-gesture-interface",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4114"
+    },
+    "project-16": {
+      "name": "vocalic-voice-calculator-web-app",
+      "type": "frontend-only",
+      "webUrl": "http://127.0.0.1:4116"
+    }
+  }
+}
