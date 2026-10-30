@@ -51,7 +51,7 @@
     "project-14": {
       "name": "touchless-hospital-gesture-interface",
       "type": "frontend-only",
-      "webUrl": "TODO"
+      "webUrl": "https://smart-hospital-chi.vercel.app"
     },
     "project-16": {
       "name": "vocalic-voice-calculator-web-app",

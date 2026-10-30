@@ -1,6 +1,6 @@
-﻿# smart-home-gesture-control-dashboard
+# smart-home-gesture-control-dashboard
 
-**Live Demo:** [https://smart-home-gesture-control-dashboard.vercel.app](https://smart-home-gesture-control-dashboard.vercel.app)
+**Live Demo:** Deployment pending
 
 
 A webcam-based hand gesture smart home automation dashboard that enables users to control virtual home appliances, ambient lighting, and room temperatures touchlessly using intuitive hand signs.
@@ -22,10 +22,10 @@ A webcam-based hand gesture smart home automation dashboard that enables users t
 ## Folder Structure
 `
 smart-home-gesture-control-dashboard/
-â”œâ”€â”€ index.html
-â”œâ”€â”€ script.js
-â”œâ”€â”€ style.css
-â””â”€â”€ README.md
+├── index.html
+├── script.js
+├── style.css
+└── README.md
 `
 
 ## How to Run

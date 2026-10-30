@@ -1,6 +1,6 @@
-﻿# smart-office-voice-dashboard
+# smart-office-voice-dashboard
 
-**Live Demo:** [https://smart-office-voice-dashboard.vercel.app](https://smart-office-voice-dashboard.vercel.app)
+**Live Demo:** Deployment pending
 
 
 A voice-activated smart office operations portal that enables occupants and facilities administrators to monitor building analytics, book meeting rooms, check biometric logs, and adjust ambient settings touchlessly.
@@ -21,8 +21,8 @@ A voice-activated smart office operations portal that enables occupants and faci
 ## Folder Structure
 `
 smart-office-voice-dashboard/
-â”œâ”€â”€ index.html
-â””â”€â”€ README.md
+├── index.html
+└── README.md
 `
 
 ## How to Run

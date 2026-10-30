@@ -1,6 +1,6 @@
-﻿# eco-ninja-gesture-slicing-game
+# eco-ninja-gesture-slicing-game
 
-**Live Demo:** [https://eco-ninja-gesture-slicing-game.vercel.app](https://eco-ninja-gesture-slicing-game.vercel.app)
+**Live Demo:** Deployment pending
 
 
 A touchless browser-based arcade game inspired by Fruit Ninja that teaches waste management and environmental protection. Players slice falling waste items using real-time webcam hand gestures captured through computer vision.
@@ -25,10 +25,10 @@ A touchless browser-based arcade game inspired by Fruit Ninja that teaches waste
 ## Folder Structure
 `
 eco-ninja-gesture-slicing-game/
-â”œâ”€â”€ index.html
-â”œâ”€â”€ script.js
-â”œâ”€â”€ style.css
-â””â”€â”€ README.md
+├── index.html
+├── script.js
+├── style.css
+└── README.md
 `
 
 ## How to Run

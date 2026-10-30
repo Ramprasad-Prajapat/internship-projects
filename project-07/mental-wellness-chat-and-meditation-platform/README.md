@@ -1,6 +1,6 @@
-﻿# mental-wellness-chat-and-meditation-platform
+# mental-wellness-chat-and-meditation-platform
 
-**Live Demo:** [https://mental-wellness-chat-and-meditation-platform.vercel.app](https://mental-wellness-chat-and-meditation-platform.vercel.app)
+**Live Demo:** Deployment pending
 
 
 An emotional wellness companion and mental health support web application designed to help individuals navigate feelings, track mental wellness trends, and practice mindfulness through guided meditation.
@@ -21,8 +21,8 @@ An emotional wellness companion and mental health support web application design
 ## Folder Structure
 `
 mental-wellness-chat-and-meditation-platform/
-â”œâ”€â”€ index.html
-â””â”€â”€ README.md
+├── index.html
+└── README.md
 `
 
 ## How to Run

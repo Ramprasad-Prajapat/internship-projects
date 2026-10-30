@@ -1,6 +1,6 @@
-﻿# facetrack-ai-attendance-system
+# facetrack-ai-attendance-system
 
-**Live Demo:** [https://facetrack-ai-attendance-system.vercel.app](https://facetrack-ai-attendance-system.vercel.app)
+**Live Demo:** Deployment pending
 
 
 A multi-branch corporate attendance SaaS platform combining webcam facial recognition simulation with geofencing to prevent proxy attendance and streamline HR operations across multiple office locations.
@@ -20,16 +20,16 @@ A multi-branch corporate attendance SaaS platform combining webcam facial recogn
 ## Folder Structure
 `
 facetrack-ai-attendance-system/
-â”œâ”€â”€ frontend/
-â”‚   â”œâ”€â”€ src/
-â”‚   â”‚   â”œâ”€â”€ components/
-â”‚   â”‚   â”œâ”€â”€ pages/
-â”‚   â”‚   â”œâ”€â”€ routes/
-â”‚   â”‚   â”œâ”€â”€ services/
-â”‚   â”‚   â””â”€â”€ styles/
-â”‚   â”œâ”€â”€ package.json
-â”‚   â””â”€â”€ vite.config.js
-â””â”€â”€ README.md
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── styles/
+│   ├── package.json
+│   └── vite.config.js
+└── README.md
 `
 
 ## How to Run

@@ -1,6 +1,6 @@
-﻿# developer-portfolio-react-typescript
+# developer-portfolio-react-typescript
 
-**Live Demo:** [https://developer-portfolio-react-typescript.vercel.app](https://developer-portfolio-react-typescript.vercel.app)
+**Live Demo:** Deployment pending
 
 
 A modern, high-performance developer portfolio web application built with React 19, TypeScript, and Tailwind CSS. It highlights featured software projects, interactive skill breakdowns, career milestones, and direct contact workflows.
@@ -22,20 +22,20 @@ A modern, high-performance developer portfolio web application built with React 
 ## Folder Structure
 `
 developer-portfolio-react-typescript/
-â”œâ”€â”€ public/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ animations/
-â”‚   â”œâ”€â”€ components/
-â”‚   â”œâ”€â”€ constants/
-â”‚   â”œâ”€â”€ hooks/
-â”‚   â”œâ”€â”€ layouts/
-â”‚   â”œâ”€â”€ pages/
-â”‚   â”œâ”€â”€ styles/
-â”‚   â”œâ”€â”€ App.tsx
-â”‚   â””â”€â”€ main.tsx
-â”œâ”€â”€ package.json
-â”œâ”€â”€ vite.config.ts
-â””â”€â”€ README.md
+├── public/
+├── src/
+│   ├── animations/
+│   ├── components/
+│   ├── constants/
+│   ├── hooks/
+│   ├── layouts/
+│   ├── pages/
+│   ├── styles/
+│   ├── App.tsx
+│   └── main.tsx
+├── package.json
+├── vite.config.ts
+└── README.md
 `
 
 ## How to Run
