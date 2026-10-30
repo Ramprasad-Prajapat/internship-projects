@@ -11,7 +11,8 @@ import axios from "axios";
  * The JWT token is read from localStorage and attached automatically.
  * Never put API keys or secrets in this file — only the base URL.
  */
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+const baseURL = rawBaseUrl.endsWith("/api") ? rawBaseUrl : `${rawBaseUrl.replace(/\/+$/, "")}/api`;
 
 export const api = axios.create({
   baseURL,

@@ -5,10 +5,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:gamepulsedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
+    url: ${SPRING_DATASOURCE_URL:${DB_URL:jdbc:h2:mem:gamepulsedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL}}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:${DB_DRIVER:org.h2.Driver}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USERNAME:sa}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:}}
     hikari:
       maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:20}
       minimum-idle: ${HIKARI_MIN_IDLE:5}
@@ -28,4 +28,4 @@ jwt:
   expirationMs: ${JWT_EXPIRATION_MS:86400000}
 
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
