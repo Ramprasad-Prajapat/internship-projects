@@ -4,6 +4,7 @@
   "private": true,
   "description": "Automated Playwright smoke, interaction, and API tests for live internship projects",
   "scripts": {
+    "test:full": "playwright test",
     "test:live": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
     "test:api": "playwright test --grep @api",

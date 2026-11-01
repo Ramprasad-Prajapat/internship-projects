@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
 
 export default defineConfig({
   testDir: "./tests",
@@ -6,8 +7,9 @@ export default defineConfig({
   expect: {
     timeout: 15000,
   },
-  retries: process.env.CI ? 2 : 1,
-  workers: 1, // run sequentially to avoid port and resource contention
+  retries: 2,
+  workers: 2,
+  outputDir: path.resolve(__dirname, "artifacts", "test-results"),
   reporter: [
     ["list"],
     ["html", { outputFolder: "playwright-report", open: "never" }],

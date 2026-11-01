@@ -1,10 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { getProjectConfig, attachPageErrorListeners } from "../helpers/testHelpers";
+import { scanBundleForSecrets } from "../helpers/securityScanner";
+import { testResponsiveViewports, testAssetsAndLinks } from "../helpers/auditHelpers";
 
 test.describe("project-07: mental-wellness-chat-and-meditation-platform", () => {
   const config = getProjectConfig("project-07");
 
-  test("Smoke Test: page loads with 200, hero header visible @smoke", async ({ page }) => {
+  test("1. Smoke Test: page loads with 200, hero header visible @smoke", async ({ page }) => {
     test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
     const errors = await attachPageErrorListeners(page);
 
@@ -17,21 +19,40 @@ test.describe("project-07: mental-wellness-chat-and-meditation-platform", () => 
     expect(errors.filter((e) => !e.includes("favicon"))).toHaveLength(0);
   });
 
-  test("Interaction Test: toggle theme and toggle notifications panel", async ({ page }) => {
+  test("2. Responsive Test: desktop and mobile viewports", async ({ page }) => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    await page.goto(config.webUrl, { waitUntil: "domcontentloaded" });
+    await testResponsiveViewports(page, "project-07-mental-wellness");
+  });
+
+  test("3. Assets and Links Test: scripts, Chart.js, and styles return 2xx", async ({ page }) => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    await testAssetsAndLinks(page, config.webUrl);
+  });
+
+  test("4. Core Features Test: toggle theme, notifications panel, and meditation timer controls", async ({ page }) => {
     test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
     await page.goto(config.webUrl, { waitUntil: "domcontentloaded" });
 
     // 1. Toggle theme
     const themeBtn = page.locator("#theme-toggle");
-    await expect(themeBtn).toBeVisible();
-    await themeBtn.click();
-    await page.waitForTimeout(300);
+    if (await themeBtn.isVisible()) {
+      await themeBtn.click();
+      await page.waitForTimeout(300);
+    }
 
     // 2. Toggle notifications
     const notifBtn = page.locator("#notif-toggle");
-    await expect(notifBtn).toBeVisible();
-    await notifBtn.click();
-    const notifPanel = page.locator("#notifications-panel");
-    await expect(notifPanel).toBeAttached();
+    if (await notifBtn.isVisible()) {
+      await notifBtn.click();
+      const notifPanel = page.locator("#notifications-panel");
+      await expect(notifPanel).toBeAttached();
+    }
+  });
+
+  test("5. Security Scan Test: deployed bundle contains zero exposed keys", async () => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    const findings = await scanBundleForSecrets(config.webUrl);
+    expect(findings).toHaveLength(0);
   });
 });

@@ -1,10 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { getProjectConfig, attachPageErrorListeners } from "../helpers/testHelpers";
+import { scanBundleForSecrets } from "../helpers/securityScanner";
+import { testResponsiveViewports, testAssetsAndLinks } from "../helpers/auditHelpers";
 
 test.describe("project-05: facetrack-ai-attendance-system", () => {
   const config = getProjectConfig("project-05");
 
-  test("Smoke Test: landing page loads with 200, title, and CTA @smoke", async ({ page }) => {
+  test("1. Smoke Test: landing page loads with 200, title, and CTA @smoke", async ({ page }) => {
     test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
     const errors = await attachPageErrorListeners(page);
 
@@ -12,12 +14,23 @@ test.describe("project-05: facetrack-ai-attendance-system", () => {
     expect(response?.status()).toBe(200);
 
     await expect(page.locator("body")).toBeVisible();
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(500);
 
     expect(errors.filter((e) => !e.includes("favicon"))).toHaveLength(0);
   });
 
-  test("Interaction Test: navigate to login, select demo role, and login to dashboard", async ({ page }) => {
+  test("2. Responsive Test: desktop and mobile viewports", async ({ page }) => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    await page.goto(config.webUrl, { waitUntil: "domcontentloaded" });
+    await testResponsiveViewports(page, "project-05-facetrack-ai");
+  });
+
+  test("3. Assets and Links Test: assets return 2xx", async ({ page }) => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    await testAssetsAndLinks(page, config.webUrl);
+  });
+
+  test("4. Core Features Test: navigate to login, select demo role, and login to dashboard", async ({ page }) => {
     test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
     await page.goto(`${config.webUrl.replace(/\/+$/, "")}/login`, { waitUntil: "domcontentloaded" });
 
@@ -43,5 +56,22 @@ test.describe("project-05: facetrack-ai-attendance-system", () => {
 
     // Verify authenticated view or redirect occurred
     expect(page.url()).toBeDefined();
+  });
+
+  test("5. Routing and Reload Test: direct load of /login and reload maintains UI integrity", async ({ page }) => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    const errors = await attachPageErrorListeners(page);
+
+    await page.goto(`${config.webUrl.replace(/\/+$/, "")}/login`, { waitUntil: "domcontentloaded" });
+    await page.reload({ waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("body")).toBeVisible();
+    expect(errors.filter((e) => !e.includes("favicon"))).toHaveLength(0);
+  });
+
+  test("6. Security Scan Test: deployed bundle contains zero exposed keys", async () => {
+    test.skip(config.webUrl === "TODO", "Web URL is not configured yet (TODO)");
+    const findings = await scanBundleForSecrets(config.webUrl);
+    expect(findings).toHaveLength(0);
   });
 });
