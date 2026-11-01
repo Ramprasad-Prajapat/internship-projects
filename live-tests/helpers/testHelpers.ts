@@ -16,7 +16,9 @@ export function getTargetEnvironment(): "production" | "local" {
 }
 
 export function getProjectConfig(projectId: string): ProjectEntry {
-  const urlsPath = path.resolve(__dirname, "..", "urls.json");
+  const urlsPath = process.env.URLS_FILE
+    ? path.resolve(process.env.URLS_FILE)
+    : path.resolve(__dirname, "..", "urls.json");
   const raw = fs.readFileSync(urlsPath, "utf-8");
   const data = JSON.parse(raw);
   const env = getTargetEnvironment();

@@ -4,7 +4,9 @@ import { getTargetEnvironment, warmUpService } from "./helpers/testHelpers";
 
 export default async function globalSetup() {
   const env = getTargetEnvironment();
-  const urlsPath = path.resolve(__dirname, "urls.json");
+  const urlsPath = process.env.URLS_FILE
+    ? path.resolve(process.env.URLS_FILE)
+    : path.resolve(__dirname, "urls.json");
   if (!fs.existsSync(urlsPath)) return;
 
   const data = JSON.parse(fs.readFileSync(urlsPath, "utf-8"));
