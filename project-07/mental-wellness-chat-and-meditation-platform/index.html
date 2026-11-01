@@ -66,10 +66,16 @@
             }
         }
 
+        html {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
         body {
             color: var(--text-main);
             transition: color 0.5s ease;
             overflow-x: hidden;
+            max-width: 100%;
             background: transparent;
         }
 
@@ -1484,7 +1490,7 @@
             </div>
 
             <!-- Charts Section -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                 <div class="glass" style="padding: 20px;">
                     <h3 style="margin-bottom: 15px;">User Engagement (Weekly)</h3>
                     <div style="height: 250px;">

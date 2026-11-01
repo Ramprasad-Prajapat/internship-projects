@@ -90,13 +90,20 @@
                         box-shadow 0.25s ease;
         }
 
+        html {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
         body {
+            position: relative;
             font-family: var(--font-body);
             background-color: var(--bg-base);
             background-image: var(--bg-gradient);
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
+            max-width: 100vw;
             display: flex;
             transition: background-color 0.5s ease, background-image 0.5s ease;
         }
